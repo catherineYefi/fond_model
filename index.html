@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фонд-акселератор — калькулятор контура</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --petrol:#1C4A43; --petrol-d:#12332E; --copper:#B9794B;
+  --ink:#262624; --brown:#5E4A38; --ivory:#F5F2EC; --paper:#FBFAF7; --sand:#F0E6DB; --line:#D8D4C9;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --sans:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+html,body{background:var(--ivory);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45}
+button,input{font-family:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 48px}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--brown)}
+.kick.cu{color:var(--copper)}
+.mono{font-family:var(--mono)}
+.logo{display:inline-flex;align-items:center;height:12px}
+.logo .a{width:12px;height:12px;border-radius:50%;background:var(--copper)}
+.logo .l{width:38px;height:1.5px;background:var(--copper)}
+.logo .b{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--copper)}
+
+/* шапка */
+.hdr{background:var(--petrol-d);color:var(--ivory);margin:0 -28px;padding:20px 28px 18px}
+.hdr-in{max-width:1180px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hdr h1{font-size:19px;font-weight:700;letter-spacing:-.01em;margin-top:12px}
+.hdr .sub{font-size:12px;opacity:.75;margin-top:3px;max-width:640px}
+.btn{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border:1px solid var(--copper);background:transparent;color:var(--ivory);cursor:pointer}
+.btn:hover{background:var(--copper);color:var(--petrol-d)}
+.btn.dark{color:var(--petrol);border-color:var(--petrol)}
+.btn.dark:hover{background:var(--petrol);color:var(--ivory)}
+.btn:focus-visible,input:focus-visible,.tg:focus-visible,.pm button:focus-visible,summary:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+
+/* ── ПРИБОРНАЯ ПАНЕЛЬ ── */
+.panel{position:sticky;top:0;z-index:5;background:var(--ivory);margin:0 -28px;padding:14px 28px 12px;border-bottom:.75px solid var(--line)}
+.panel-in{max-width:1180px;margin:0 auto}
+.gauges{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;background:var(--paper);border:.75px solid var(--line)}
+.gauges>div{padding:14px 18px 12px;border-right:.75px solid var(--line);min-width:0}
+.gauges>div:last-child{border-right:0}
+.g .v{font-family:var(--mono);font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1;margin:9px 0 7px;color:var(--petrol);white-space:nowrap}
+.g.main .v{font-size:34px;color:var(--copper)}
+.g .d{font-size:11.5px;color:var(--brown);line-height:1.35}
+.g .d b{font-family:var(--mono);font-weight:500;color:var(--ink);white-space:nowrap}
+.g .d b.up{color:var(--petrol)}
+.g .d b.dn{color:var(--copper)}
+.g .sw{display:inline-flex;border:.75px solid var(--line);margin-top:8px}
+.g .sw button{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:0;background:transparent;color:var(--brown);cursor:pointer}
+.g .sw button.on{background:var(--petrol);color:var(--ivory)}
+/* шкала */
+.scale{position:relative;height:32px;margin:12px 6px 0}
+.scale .track{position:absolute;left:0;right:0;top:13px;height:3px;background:var(--sand)}
+.scale .zero{position:absolute;top:7px;width:1px;height:15px;background:var(--copper)}
+.scale .base{position:absolute;top:9px;width:11px;height:11px;border-radius:50%;border:1.5px solid var(--petrol);background:var(--paper);margin-left:-5.5px}
+.scale .now{position:absolute;top:8px;width:13px;height:13px;border-radius:50%;background:var(--copper);margin-left:-6.5px}
+.scale .lbl{position:absolute;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--brown)}
+.legend{font-size:11px;color:var(--brown);margin-top:6px;display:flex;gap:16px;flex-wrap:wrap}
+.mk{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--petrol);vertical-align:middle;margin-right:6px;background:var(--paper)}
+.mk.cu{border-color:var(--copper);background:var(--copper)}
+.mk.full{background:var(--petrol)}
+@media(max-width:980px){.gauges{grid-template-columns:1fr 1fr 1fr}.g.main{grid-column:1/-1;border-bottom:.75px solid var(--line)}}
+@media(max-width:640px){.gauges{grid-template-columns:1fr 1fr}.g.main{grid-column:1/-1}.g .v{font-size:20px}.g.main .v{font-size:30px}.panel{position:static}}
+
+/* ── РУЧКИ ── */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;align-items:start}
+.cols>*{min-width:0}
+@media(max-width:760px){.cols{grid-template-columns:1fr}.wrap{padding:0 16px 40px}.hdr,.panel{margin:0 -16px;padding-left:16px;padding-right:16px}}
+.card{background:var(--paper);border:.75px solid var(--line);padding:16px 18px 14px}
+.card h2{font-size:14px;font-weight:700}
+.card .lead{font-size:12px;color:var(--brown);margin:3px 0 8px}
+.grp{margin-top:12px}
+.grp .kick{display:flex;justify-content:space-between;padding-bottom:6px;border-bottom:.75px solid var(--line)}
+.row{display:grid;grid-template-columns:22px 1fr 112px;gap:10px;align-items:center;padding:7px 0;border-bottom:.75px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row.off .nm,.row.off .sub{color:var(--brown);opacity:.55}
+.row .nm{font-size:13px;font-weight:500}
+.row .sub{font-size:11px;color:var(--brown);margin-top:1px;line-height:1.3}
+.row input[type=text]{width:100%;font-family:var(--mono);font-size:12.5px;text-align:right;padding:5px 7px;border:.75px solid var(--line);background:#fff;color:var(--ink);min-width:0}
+.row.off input[type=text]{color:var(--brown);background:var(--ivory)}
+.row .unit{font-family:var(--mono);font-size:9.5px;color:var(--brown);text-align:right;margin-top:2px;letter-spacing:.06em}
+@media(max-width:760px){.row{grid-template-columns:22px 1fr 96px}}
+.tg{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--petrol);background:transparent;cursor:pointer;padding:0;display:inline-block}
+.tg.on{background:var(--petrol)}
+.tg.cu{border-color:var(--copper)}
+.tg.cu.on{background:var(--copper)}
+.tot{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0 2px;margin-top:8px;border-top:1.5px solid var(--petrol)}
+.tot b{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--petrol)}
+.tot span{font-size:12.5px}
+.rm{font-family:var(--mono);font-size:9.5px;color:var(--brown);background:none;border:0;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;padding:0}
+.rm:hover{color:var(--copper)}
+.addbar{margin-top:10px}
+.addbar .btn{width:100%;text-align:left}
+.addform{display:none;gap:8px;margin-top:8px;flex-wrap:wrap}
+.addform.open{display:flex}
+.addform input[type=text]{flex:1 1 160px;padding:7px 9px;border:.75px solid var(--line);background:#fff;font-size:12.5px;min-width:0}
+.addform input.n{flex:0 1 130px;font-family:var(--mono);text-align:right}
+.counter{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:.75px solid var(--line)}
+.counter .nm{font-size:13px;font-weight:500}
+.counter .sub{font-size:11px;color:var(--brown);margin-top:1px}
+.pm{display:inline-flex;align-items:center;border:.75px solid var(--petrol);flex:none}
+.pm button{width:34px;height:32px;border:0;background:transparent;color:var(--petrol);font-family:var(--mono);font-size:16px;cursor:pointer}
+.pm button:hover{background:var(--sand)}
+.pm b{font-family:var(--mono);font-size:15px;font-weight:500;min-width:40px;text-align:center;color:var(--copper)}
+
+/* подсказка */
+.hint{margin-top:16px;background:var(--paper);border:.75px solid var(--copper)}
+.hint summary{color:var(--copper)}
+.hint .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 18px 16px}
+@media(max-width:760px){.hint .steps{grid-template-columns:1fr}}
+.hint .st{border-top:.75px solid var(--line);padding-top:10px}
+.hint .st .kick{display:block;margin-bottom:8px}
+.hint .st p{font-size:12.5px;line-height:1.45}
+.hint .mock{background:var(--ivory);border:.75px solid var(--line);padding:10px 12px;margin-bottom:10px;font-size:11.5px;display:flex;align-items:center;gap:10px}
+.hint .mock .fld{font-family:var(--mono);font-size:11px;padding:3px 6px;border:.75px solid var(--line);background:#fff}
+.hint .mock .fld.sand{background:var(--sand)}
+.hint .mock .arrow{color:var(--copper)}
+.hint .mock .big{font-family:var(--mono);font-size:16px;color:var(--copper)}
+.hint .mock .sm{font-size:10.5px;color:var(--brown)}
+.scale .off{position:absolute;top:22px;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--copper)}
+/* спойлеры */
+details{margin-top:16px;background:var(--paper);border:.75px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:12px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary .chev{width:0;height:0;border-left:5px solid var(--copper);border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .15s}
+details[open] summary .chev{transform:rotate(90deg)}
+details .body{padding:0 18px 16px}
+.ledger{width:100%;border-collapse:collapse}
+.ledger td{padding:7px 0;border-bottom:.75px solid var(--line);font-size:12.5px;vertical-align:top}
+.ledger tr:last-child td{border-bottom:0}
+.ledger td.a{font-family:var(--mono);text-align:right;white-space:nowrap;padding-left:12px}
+.ledger td.a.neg{color:var(--copper)}
+.ledger tr.sum td{font-weight:700;border-top:1.5px solid var(--petrol);border-bottom:0;padding-top:10px}
+.ledger tr.sum td.a{color:var(--petrol)}
+.ledger .sub{display:block;font-size:11px;color:var(--brown)}
+.chart svg{width:100%;height:auto;display:block;max-width:640px}
+.note{font-size:11.5px;color:var(--brown);line-height:1.4;margin-top:8px}
+.ftr{margin-top:32px;padding-top:12px;border-top:.75px solid var(--line);font-size:11.5px;color:var(--brown);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--petrol-d);color:var(--ivory);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;display:none;z-index:9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr"><div class="hdr-in">
+    <div><span class="logo"><span class="a"></span><span class="l"></span><span class="b"></span></span>
+      <h1>Калькулятор контура</h1>
+      <div class="sub">Один месяц в стационарном режиме: если всё так — сколько остаётся. Без НДС, ставки как платим. Сверху — показатели и отклонение от базы 14.09.2026, снизу — ручки.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="copyLink()">Скопировать ссылку на сценарий</button>
+      <button class="btn" onclick="resetAll()">Вернуть базу</button>
+    </div>
+  </div></div>
+
+  <div class="panel"><div class="panel-in" id="panel"></div></div>
+
+  <details class="hint" id="hint" open><summary><span class="chev"></span>Как пользоваться — три шага</summary>
+    <div class="steps">
+      <div class="st"><span class="kick cu">1 · включить или выключить</span>
+        <div class="mock"><span class="tg on" style="cursor:default"></span><span>платим</span><span class="arrow">→</span><span class="tg" style="cursor:default"></span><span>не платим</span></div>
+        <p>Круг перед человеком или клиентом. Закрашен — в расчёте, пустой — нет. Клик переключает. Сумма при этом не стирается — можно вернуть.</p></div>
+      <div class="st"><span class="kick cu">2 · поменять сумму или число</span>
+        <div class="mock"><span class="fld">250 000</span><span class="arrow">→</span><span class="fld sand">300 000</span><span class="sm">Enter</span></div>
+        <p>Впиши новую сумму в поле и нажми Enter или щёлкни вне поля. Новых клиентов добавляют кнопки минус и плюс. «+ Добавить сотрудника» — для найма, которого ещё нет.</p></div>
+      <div class="st"><span class="kick cu">3 · смотреть на панель</span>
+        <div class="mock"><span class="big">−442 904 ₽</span><span class="sm">база −442 904 → <b style="color:var(--petrol)">+150 000</b></span></div>
+        <p>Верхняя панель пересчитывается на каждый клик. Под каждой цифрой — база 14.09 и отклонение от неё: петроль — лучше, медь — хуже. «Вернуть базу» сбрасывает всё, «Скопировать ссылку» сохраняет сценарий.</p></div>
+    </div></details>
+
+  <div class="cols">
+    <div class="card" id="teamCard"></div>
+    <div class="card" id="clientCard"></div>
+  </div>
+
+  <details><summary><span class="chev"></span>Как посчитано — ведомость от выручки до результата</summary><div class="body" id="ledger"></div></details>
+  <details><summary><span class="chev"></span>График — результат в месяц от числа клиентов</summary><div class="body" id="chartBox"></div></details>
+
+  <div class="ftr"><span>Считает только акселерацию; мастермайнды — переключателем в панели как усреднённый вклад. CAC, дьюдил, юристы, разовые расходы не учтены.</span><span>v2.1 · 14.09.2026</span></div>
+</div>
+<div class="toast" id="toast">Ссылка скопирована</div>
+
+<script>
+/* ═══════════ БАЗА 14.09.2026 — те же значения, что в листе «Что_если» ═══════════ */
+const BASE = {
+  vat: 0.22, tax: 0.25, priceNew: 500000, priceOld: 416667,
+  trackerRate: 100000, ckRate: 25000, newClients: 0,
+  mmOn: false, mmYear: 21077692,
+  team: [
+    {g:'Управление', n:'Дубровин Евгений', s:'CEO', v:268817, on:true},
+    {g:'Управление', n:'Дубровин — трекерство и встречи как руководитель', s:'в среднем 500–600 тыс.; внутри Иванова и пост-опционные', v:550000, on:true},
+    {g:'Управление', n:'Амина', s:'коммуникации и операционка, через Дубровина', v:53763, on:true},
+    {g:'Управление', n:'Ефимчук Екатерина', s:'CPO / COO', v:268817, on:true},
+    {g:'Управление', n:'Белов Артём', s:'CFO', v:250000, on:true},
+    {g:'Управление', n:'Карпова Настя', s:'проджект, с октября', v:100000, on:true},
+    {g:'Сервис и продажи', n:'Надршина Эля', s:'аккаунт ЦК', v:85106, on:true},
+    {g:'Сервис и продажи', n:'Хмелинин Сергей', s:'МОП, фикс — бонусы от продаж не здесь', v:85106, on:true},
+    {g:'Сервис и продажи', n:'Айнабекова Ольга', s:'продажи, фикс с сентября', v:85106, on:true},
+    {g:'Сервис и продажи', n:'Бойбобоев Амир', s:'СММ', v:31915, on:true},
+    {g:'Сервис и продажи', n:'Калита Тимофей', s:'конкурентная разведка, проектно', v:53191, on:false},
+    {g:'IT и прочий фикс', n:'Бердяев Александр', s:'CIO, платформа', v:212766, on:true},
+    {g:'IT и прочий фикс', n:'Компенсации Бердяеву', s:'инструменты', v:77878, on:true},
+    {g:'IT и прочий фикс', n:'Сервисы', s:'Claude, Яндекс, Wazzup, Google, амоЦРМ', v:135871, on:true},
+    {g:'IT и прочий фикс', n:'Административные', s:'юристы, Консоль, Zoom — норма', v:120000, on:true},
+    {g:'Расходы без выручки', n:'Островский — встречи Алёшина', s:'не платит; в августе 3 встречи', v:75000, on:true},
+  ],
+  clients: [
+    {n:'Бражников / Оками', s:'5 млн · трекер Гор', tariff:'old', tracker:100000, on:true},
+    {n:'Бобрук / 144 Капитал', s:'5 млн · трекер Гор · продление в декабре', tariff:'old', tracker:100000, on:true},
+    {n:'Иванова / Напор', s:'6 млн · трекер Дубровин — внутри его 550 000', tariff:'new', tracker:0, on:true},
+    {n:'Лебедев', s:'6 млн · трекер Алёшин', tariff:'new', tracker:100000, on:true},
+    {n:'Новик-Качан', s:'6 млн помесячно · трекер Алёшин', tariff:'new', tracker:100000, on:true},
+    {n:'Козырев / Система 10Х', s:'6 млн · трекер Алёшин', tariff:'new', tracker:100000, on:true},
+    {n:'Косолапов', s:'6 млн помесячно · трекер не назначен, ставка по умолчанию', tariff:'new', tracker:100000, on:true},
+  ],
+};
+
+/* ── расчёт ── */
+function calcOf(s){
+  const net = g => g/(1+s.vat);
+  const fixed = s.team.filter(t=>t.on).reduce((a,t)=>a+t.v,0);
+  const groups={}; s.team.forEach(t=>{ if(!groups[t.g]) groups[t.g]=0; if(t.on) groups[t.g]+=t.v; });
+  const active=s.clients.filter(c=>c.on);
+  const revGross = active.reduce((a,c)=>a+(c.tariff==='old'?s.priceOld:s.priceNew),0) + s.newClients*s.priceNew;
+  const revNet = net(revGross);
+  const nPaying = active.length + s.newClients;
+  const trackers = active.reduce((a,c)=>a+c.tracker,0) + s.newClients*s.trackerRate;
+  const ck = nPaying*s.ckRate;
+  const contribution = revNet - trackers - ck;
+  const result = contribution - fixed;
+  const mm = s.mmOn ? s.mmYear/12 : 0;
+  const total = result + mm;
+  const afterTax = total>0 ? total*(1-s.tax) : total;
+  const perNew = net(s.priceNew) - s.trackerRate - s.ckRate;
+  const breakeven = perNew>0 ? Math.max(0, Math.ceil((fixed - mm)/perNew)) : null;
+  const gap = perNew>0 ? (total>=0 ? Math.floor(total/perNew) : -Math.ceil(-total/perNew)) : null;
+  const curve=[]; for(let n=0;n<=16;n++) curve.push({n, y:n*perNew - fixed + mm});
+  return {fixed,groups,revGross,revNet,nPaying,trackers,ck,contribution,result,mm,total,afterTax,perNew,breakeven,gap,curve};
+}
+let S = JSON.parse(JSON.stringify(BASE));
+const BASE_R = calcOf(BASE);
+const calc = () => calcOf(S);
+
+/* ── утилиты ── */
+const Nf = n => (n==null||isNaN(n))?'—':new Intl.NumberFormat('ru-RU').format(Math.round(n)).replace(/-/g,'−');
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const numIn = v => { const n=parseFloat(String(v).replace(/[\s\u00a0]/g,'').replace(',','.')); return isNaN(n)?0:n; };
+
+/* ── состояние в ссылке ── */
+function encodeState(){
+  const c={ t:S.team.map(x=>[x.on?1:0,x.v,x.n,x.s,x.g,x.custom?1:0]), c:S.clients.map(x=>[x.on?1:0,x.tracker,x.tariff]),
+    n:S.newClients, tr:S.trackerRate, ck:S.ckRate, mm:S.mmOn?1:0, my:S.mmYear };
+  c.h = document.getElementById('hint').open?1:0;
+  return btoa(unescape(encodeURIComponent(JSON.stringify(c))));
+}
+function onHint(){ pushState(); }
+function decodeState(h){
+  try{
+    const c=JSON.parse(decodeURIComponent(escape(atob(h))));
+    const st=JSON.parse(JSON.stringify(BASE));
+    st.team=c.t.map(a=>({on:!!a[0],v:a[1],n:a[2],s:a[3],g:a[4],custom:!!a[5]}));
+    c.c.forEach((a,i)=>{ if(st.clients[i]){st.clients[i].on=!!a[0];st.clients[i].tracker=a[1];st.clients[i].tariff=a[2];} });
+    st.newClients=c.n; st.trackerRate=c.tr; st.ckRate=c.ck; st.mmOn=!!c.mm; st.mmYear=c.my;
+    if(c.h===0) document.getElementById('hint').open=false;
+    return st;
+  }catch(e){ return null; }
+}
+function pushState(){ history.replaceState(null,'','#'+encodeState()); }
+function copyLink(){ pushState(); navigator.clipboard.writeText(location.href).then(()=>{ const t=document.getElementById('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1600); }); }
+function resetAll(){ S=JSON.parse(JSON.stringify(BASE)); history.replaceState(null,'',location.pathname); render(); }
+
+/* ── панель ── */
+function delta(now, base, fmt=Nf, lowerIsBetter=false){
+  const d=now-base; if(Math.abs(d)<0.5) return `<b>как в базе</b>`;
+  const good = lowerIsBetter ? d<0 : d>0;
+  return `база ${fmt(base)} → <b class="${good?'up':'dn'}">${(d>0?'+':'−')+fmt(Math.abs(d))}</b>`;
+}
+function renderPanel(r){
+  const b=BASE_R;
+  const gapTxt = g => g==null?'—':(g>=0?`запас ${g}`:`нужно ещё ${-g}`);
+  const lo=-1500000, hi=3000000;
+  const pos = v => Math.max(0,Math.min(100,(v-lo)/(hi-lo)*100));
+  document.getElementById('panel').innerHTML=`
+  <div class="gauges">
+    <div class="g main"><span class="kick cu">${r.total>=0?'Остаётся в месяц':'Не хватает в месяц'}</span>
+      <div class="v">${Nf(r.total)} ₽</div>
+      <div class="d">${delta(r.total,b.total)}${r.total>0?` · после налога ${Nf(r.afterTax)}`:''}</div>
+      <div class="sw"><button class="${S.mmOn?'':'on'}" onclick="setMM(false)">без ММ</button><button class="${S.mmOn?'on':''}" onclick="setMM(true)">с ММ</button></div></div>
+    <div class="g"><span class="kick">Безубыточность</span><div class="v">${r.breakeven==null?'—':r.breakeven}</div><div class="d">клиентов нового тарифа${S.mmOn?' — с учётом ММ':''}<br>${delta(r.breakeven,b.breakeven,x=>x,true)}</div></div>
+    <div class="g"><span class="kick">Запас / недобор</span><div class="v">${r.gap==null?'—':(r.gap>=0?'+':'')+r.gap}</div><div class="d">${gapTxt(r.gap)}<br>в базе — ${gapTxt(b.gap)}</div></div>
+    <div class="g"><span class="kick">Фикс в месяц</span><div class="v">${Nf(r.fixed)}</div><div class="d">${delta(r.fixed,b.fixed,Nf,true)}</div></div>
+    <div class="g"><span class="kick">Платящих клиентов</span><div class="v">${r.nPaying}</div><div class="d">без НДС ${Nf(r.revNet)}<br>${delta(r.nPaying,b.nPaying,x=>x)}</div></div>
+  </div>
+  <div class="scale">
+    <div class="track"></div>
+    <div class="zero" style="left:${pos(0)}%"></div><div class="lbl" style="left:${pos(0)}%;top:-3px;transform:translateX(-50%)">0</div>
+    <div class="lbl" style="left:0;top:21px">−1,5 млн</div><div class="lbl" style="right:0;top:21px">+3 млн</div>
+    <div class="base" style="left:${pos(b.total)}%" title="база"></div>
+    <div class="now" style="left:${pos(r.total)}%" title="сейчас"></div>
+    ${r.total<lo?`<div class="off" style="left:0">за шкалой ←</div>`:''}${r.total>hi?`<div class="off" style="right:0">→ за шкалой</div>`:''}
+  </div>
+  <div class="legend"><span><span class="mk cu"></span>сейчас</span><span><span class="mk"></span>база 14.09 — ${Nf(b.total)} ₽</span><span>медная риска — ноль</span></div>`;
+}
+
+/* ── ручки ── */
+const tg = (on, act, cu) => `<button class="tg ${on?'on':''} ${cu?'cu':''}" type="button" aria-label="${on?'выключить':'включить'}" onclick="${act}"></button>`;
+function renderTeam(r){
+  const groups=[...new Set(S.team.map(t=>t.g))];
+  let html=`<h2>Команда и фикс</h2><div class="lead">Круг закрашен — платим. Сумму правь в поле и подтверди Enter.</div>`;
+  groups.forEach(g=>{
+    html+=`<div class="grp"><span class="kick"><span>${esc(g)}</span><span>${Nf(r.groups[g]||0)} ₽</span></span>`;
+    S.team.forEach((t,i)=>{ if(t.g!==g) return;
+      html+=`<div class="row ${t.on?'':'off'}">${tg(t.on,`toggleTeam(${i})`,g==='Расходы без выручки')}
+        <div><div class="nm">${esc(t.n)}</div><div class="sub">${esc(t.s)}${t.custom?` · <button class="rm" onclick="removeTeam(${i})">убрать</button>`:''}</div></div>
+        <div><input type="text" value="${Nf(t.v)}" onchange="setTeam(${i},this.value)" aria-label="сумма"><div class="unit">₽ / мес</div></div></div>`;
+    });
+    html+=`</div>`;
+  });
+  html+=`<div class="addbar"><button class="btn dark" onclick="toggleAdd()">+ Добавить сотрудника или расход</button>
+    <div class="addform" id="addform"><input type="text" id="addN" placeholder="Кто или что"><input type="text" class="n" id="addV" placeholder="₽ / мес" onkeydown="if(event.key==='Enter')addTeam()"><button class="btn dark" onclick="addTeam()">В сценарий</button></div></div>
+  <div class="tot"><span>Фикс в месяц</span><b>${Nf(r.fixed)} ₽</b></div>`;
+  document.getElementById('teamCard').innerHTML=html;
+}
+function renderClients(r){
+  let html=`<h2>Платящие клиенты акселерации</h2><div class="lead">Портфель на 14.09. Изосина и Цыганов — на опционе, не платят; Голубенко вышел.</div>
+  <div class="grp"><span class="kick"><span>Портфель</span><span>${S.clients.filter(c=>c.on).length} платящих</span></span>`;
+  S.clients.forEach((c,i)=>{
+    html+=`<div class="row ${c.on?'':'off'}">${tg(c.on,`toggleClient(${i})`)}
+      <div><div class="nm">${esc(c.n)}</div><div class="sub">${esc(c.s)}${(c.tracker===0 && !S.team.some(t=>t.on && /трекерство/.test(t.n)))?' · <b style="color:var(--copper)">трекерство Дубровина выключено — впиши ставку</b>':''}</div></div>
+      <div><input type="text" value="${Nf(c.tracker)}" onchange="setTracker(${i},this.value)" aria-label="ставка трекера"><div class="unit">трекер ₽</div></div></div>`;
+  });
+  html+=`</div>
+  <div class="grp"><span class="kick"><span>Новые клиенты · 6 млн в год</span><span>${Nf(r.perNew)} ₽ вклада каждый</span></span>
+    <div class="counter"><div><div class="nm">Новых сверх портфеля</div><div class="sub">500 000 с НДС в месяц, трекер и ЦК по ставкам ниже</div></div>
+      <div class="pm"><button onclick="stepNew(-1)" aria-label="минус">−</button><b>${S.newClients}</b><button onclick="stepNew(1)" aria-label="плюс">+</button></div></div>
+  </div>
+  <div class="grp"><span class="kick"><span>Переменные ставки на клиента</span><span></span></span>
+    <div class="row"><span class="mk full"></span><div><div class="nm">Трекер</div><div class="sub">за клиента в месяц, 4–5 встреч; меньше четырёх — 25 000 за встречу</div></div>
+      <div><input type="text" value="${Nf(S.trackerRate)}" onchange="setRate('trackerRate',this.value)" aria-label="ставка трекера"><div class="unit">₽ / клиент</div></div></div>
+    <div class="row"><span class="mk full"></span><div><div class="nm">Боронина — Центр компетенций</div><div class="sub">это и есть её оплата, фикса нет</div></div>
+      <div><input type="text" value="${Nf(S.ckRate)}" onchange="setRate('ckRate',this.value)" aria-label="ставка ЦК"><div class="unit">₽ / клиент</div></div></div>
+    <div class="row"><span class="mk cu"></span><div><div class="nm">Мастермайнды — вклад в год</div><div class="sub">2 × 10 538 846 по факту августа; включается переключателем в панели</div></div>
+      <div><input type="text" value="${Nf(S.mmYear)}" onchange="setRate('mmYear',this.value)" aria-label="вклад ММ в год"><div class="unit">₽ / год</div></div></div>
+  </div>
+  <div class="tot"><span>Выручка без НДС · ${r.nPaying} платящих</span><b>${Nf(r.revNet)} ₽</b></div>`;
+  document.getElementById('clientCard').innerHTML=html;
+}
+
+/* ── ведомость и график ── */
+function renderLedger(r){
+  document.getElementById('ledger').innerHTML=`<table class="ledger">
+    <tr><td>Выручка без НДС<span class="sub">${r.nPaying} платящих · ${Nf(r.revGross)} с НДС</span></td><td class="a">${Nf(r.revNet)}</td></tr>
+    <tr><td>Трекеры</td><td class="a neg">−${Nf(r.trackers)}</td></tr>
+    <tr><td>Центр компетенций · ${Nf(S.ckRate)} × ${r.nPaying}</td><td class="a neg">−${Nf(r.ck)}</td></tr>
+    <tr class="sum"><td>Вклад акселерации</td><td class="a">${Nf(r.contribution)}</td></tr>
+    <tr><td>Фикс: команда, IT, административные, расходы без выручки</td><td class="a neg">−${Nf(r.fixed)}</td></tr>
+    <tr class="sum"><td>Результат акселерации</td><td class="a ${r.result<0?'neg':''}">${Nf(r.result)}</td></tr>
+    <tr><td>Мастермайнды, усреднённо в месяц${S.mmOn?'':' — выключены'}</td><td class="a">${S.mmOn?'+'+Nf(r.mm):'0'}</td></tr>
+    <tr class="sum"><td>Остаётся в месяц</td><td class="a ${r.total<0?'neg':''}">${Nf(r.total)}</td></tr>
+    <tr><td>После налога на прибыль 25 %</td><td class="a">${Nf(r.afterTax)}</td></tr>
+    <tr><td>Вклад одного нового клиента<span class="sub">без НДС минус трекер ${Nf(S.trackerRate)} и ЦК ${Nf(S.ckRate)}</span></td><td class="a">${Nf(r.perNew)}</td></tr>
+  </table>`;
+}
+function chart(r){
+  const W=640,H=250,pl=58,pr=14,pt=16,pb=30;
+  const ys=r.curve.map(p=>p.y); const yMin=Math.min(...ys,r.total,0), yMax=Math.max(...ys,r.total,0);
+  const pad=(yMax-yMin)*0.08||1e5, y0=yMin-pad, y1=yMax+pad;
+  const X=n=>pl+(n/16)*(W-pl-pr), Y=v=>pt+(1-(v-y0)/(y1-y0))*(H-pt-pb);
+  let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="результат в месяц от числа клиентов">`;
+  for(let i=0;i<=5;i++){ const v=y0+(y1-y0)*i/5; s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#EDE8DF"/><text x="${pl-6}" y="${Y(v)+3}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#5E4A38">${(v/1e6).toFixed(1).replace('.',',')}</text>`; }
+  s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#B9794B" stroke-dasharray="3 3"/>`;
+  for(let n=0;n<=16;n+=2) s+=`<text x="${X(n)}" y="${H-10}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#5E4A38">${n}</text>`;
+  s+=`<text x="${W-pr}" y="${H-1}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#5E4A38" letter-spacing="1">КЛИЕНТОВ НОВОГО ТАРИФА</text><text x="${pl-6}" y="${pt-5}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#5E4A38" letter-spacing="1">МЛН ₽ / МЕС</text>`;
+  s+=`<polyline fill="none" stroke="#1C4A43" stroke-width="1.75" points="${r.curve.map(p=>X(p.n)+','+Y(p.y)).join(' ')}"/>`;
+  if(r.breakeven!=null&&r.breakeven<=16) s+=`<circle cx="${X(r.breakeven)}" cy="${Y(0)}" r="4" fill="#FBFAF7" stroke="#1C4A43" stroke-width="1.5"/>`;
+  const nx=Math.min(16,r.nPaying); s+=`<circle cx="${X(nx)}" cy="${Y(r.total)}" r="5" fill="#B9794B"/><text x="${X(nx)+9}" y="${Y(r.total)+3}" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#B9794B" letter-spacing="1">СЕЙЧАС</text>`;
+  return s+`</svg><div class="note">Кривая — для клиентов нового тарифа с трекером ${Nf(S.trackerRate)} при текущем фиксе. Кольцо — безубыточность, пунктир — ноль. Фактический портфель смешанный, поэтому точка «сейчас» может лежать не на кривой.</div>`;
+}
+
+function render(){ const r=calc(); renderPanel(r); renderTeam(r); renderClients(r); renderLedger(r); document.getElementById('chartBox').innerHTML=`<div class="chart">${chart(r)}</div>`; pushState(); }
+
+/* ── действия ── */
+function toggleTeam(i){ S.team[i].on=!S.team[i].on; render(); }
+function setTeam(i,v){ S.team[i].v=numIn(v); render(); }
+function removeTeam(i){ S.team.splice(i,1); render(); }
+function toggleAdd(){ const f=document.getElementById('addform'); f.classList.toggle('open'); if(f.classList.contains('open')) document.getElementById('addN').focus(); }
+function addTeam(){ const n=document.getElementById('addN').value.trim(), v=numIn(document.getElementById('addV').value); if(!n||!v) return; S.team.push({g:'Добавлено в сценарии',n,s:'нет в базе 14.09',v,on:true,custom:true}); document.getElementById('addN').value=''; document.getElementById('addV').value=''; render(); }
+function toggleClient(i){ S.clients[i].on=!S.clients[i].on; render(); }
+function setTracker(i,v){ S.clients[i].tracker=numIn(v); render(); }
+function stepNew(d){ S.newClients=Math.max(0,Math.min(20,S.newClients+d)); render(); }
+function setRate(k,v){ S[k]=numIn(v); render(); }
+function setMM(on){ S.mmOn=on; render(); }
+
+(function(){ const h=location.hash.slice(1); if(h){ const st=decodeState(h); if(st) S=st; } document.getElementById('hint').addEventListener('toggle', onHint); render(); })();
+</script>
+</body>
+</html>
