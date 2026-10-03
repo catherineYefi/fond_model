@@ -1,399 +1,663 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Фонд-акселератор — калькулятор контура</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Калькулятор контура</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+/* Раскладка: тёмная шапка-манифест → полоса показателей → каскад трёх слоёв → ручки в две колонки → ведомость и кривая */
 :root{
-  --petrol:#1C4A43; --petrol-d:#12332E; --copper:#B9794B;
-  --ink:#262624; --brown:#5E4A38; --ivory:#F5F2EC; --paper:#FBFAF7; --sand:#F0E6DB; --line:#D8D4C9;
-  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --bg:#F5F2EC; --card:#FBFAF7; --input:#FFFFFF; --line:#D8D4C9; --sand:#F0E6DB;
+  --ink:#262624; --ink2:#5E4A38; --muted:#6E6A61;
+  --petrol:#1C4A43; --copper:#B9794B;
+  --hdr-bg:#12332E; --hdr-fg:#F5F2EC; --grid:#E6E1D7;
   --sans:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
 }
-html,body{background:var(--ivory);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45}
-button,input{font-family:inherit}
-.wrap{max-width:1180px;margin:0 auto;padding:0 28px 48px}
-.kick{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--brown)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F2622; --card:#15302B; --input:#10292484; --line:#2D4C45; --sand:#21403A;
+    --ink:#F5F2EC; --ink2:#D8C8B4; --muted:#A8A296;
+    --petrol:#8CC0B4; --copper:#D39C70;
+    --hdr-bg:#0A1C19; --hdr-fg:#F5F2EC; --grid:#22423C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F2622; --card:#15302B; --input:#10292484; --line:#2D4C45; --sand:#21403A;
+  --ink:#F5F2EC; --ink2:#D8C8B4; --muted:#A8A296;
+  --petrol:#8CC0B4; --copper:#D39C70;
+  --hdr-bg:#0A1C19; --hdr-fg:#F5F2EC; --grid:#22423C; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;margin:0}
+button,input,textarea{font-family:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:24px;padding-block:0 48px}
+@media(max-width:640px){.wrap{padding-inline:16px}}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
 .kick.cu{color:var(--copper)}
-.mono{font-family:var(--mono)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance;margin:0}
+
+/* логотип: точка А → точка Б */
 .logo{display:inline-flex;align-items:center;height:12px}
-.logo .a{width:12px;height:12px;border-radius:50%;background:var(--copper)}
-.logo .l{width:38px;height:1.5px;background:var(--copper)}
-.logo .b{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--copper)}
+.logo i{display:block}
+.logo .a{width:11px;height:11px;border-radius:50%;background:var(--copper)}
+.logo .l{width:36px;height:1.5px;background:var(--copper)}
+.logo .b{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--copper)}
 
 /* шапка */
-.hdr{background:var(--petrol-d);color:var(--ivory);margin:0 -28px;padding:20px 28px 18px}
-.hdr-in{max-width:1180px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.hdr h1{font-size:19px;font-weight:700;letter-spacing:-.01em;margin-top:12px}
-.hdr .sub{font-size:12px;opacity:.75;margin-top:3px;max-width:640px}
-.btn{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border:1px solid var(--copper);background:transparent;color:var(--ivory);cursor:pointer}
-.btn:hover{background:var(--copper);color:var(--petrol-d)}
-.btn.dark{color:var(--petrol);border-color:var(--petrol)}
-.btn.dark:hover{background:var(--petrol);color:var(--ivory)}
-.btn:focus-visible,input:focus-visible,.tg:focus-visible,.pm button:focus-visible,summary:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+.hdr{background:var(--hdr-bg);color:var(--hdr-fg);margin-inline:-24px;padding:22px 24px 20px}
+@media(max-width:640px){.hdr{margin-inline:-16px;padding-inline:16px}}
+.hdr-in{max-width:1200px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hdr h1{font-size:20px;font-weight:700;margin-top:12px;letter-spacing:-.01em}
+.hdr .sub{font-size:12.5px;opacity:.78;margin-top:4px;max-width:660px}
+.hdr .kick{color:var(--copper)}
 
-/* ── ПРИБОРНАЯ ПАНЕЛЬ ── */
-.panel{position:sticky;top:0;z-index:5;background:var(--ivory);margin:0 -28px;padding:14px 28px 12px;border-bottom:.75px solid var(--line)}
-.panel-in{max-width:1180px;margin:0 auto}
-.gauges{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;background:var(--paper);border:.75px solid var(--line)}
-.gauges>div{padding:14px 18px 12px;border-right:.75px solid var(--line);min-width:0}
+/* кнопки */
+.btn{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border:1px solid var(--petrol);background:transparent;color:var(--petrol);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--petrol);color:var(--bg)}
+.btn.cu{border-color:var(--copper);color:var(--copper)}
+.btn.cu:hover{background:var(--copper);color:var(--bg)}
+.btn.sm{padding:5px 8px;font-size:9px}
+.hdr .btn{border-color:var(--copper);color:var(--hdr-fg)}
+.hdr .btn:hover{background:var(--copper);color:var(--hdr-bg)}
+:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+
+/* сценарии */
+.scen{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:12px 0;border-bottom:.75px solid var(--line)}
+.scen .cur{font-size:13px}
+.scen .cur b{font-weight:700}
+.scen .spacer{flex:1}
+.scen input[type=text]{border:.75px solid var(--line);background:var(--input);padding:7px 9px;font-size:13px;min-width:0;width:220px;max-width:100%}
+.drawer{background:var(--card);border:.75px solid var(--line);padding:14px 16px;margin-top:10px;display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+@media(max-width:760px){.drawer{grid-template-columns:1fr}}
+.drawer h3{font-size:13px;font-weight:700;margin-bottom:8px}
+.slist{display:flex;flex-direction:column}
+.srow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:.75px solid var(--line);flex-wrap:wrap}
+.srow:last-child{border-bottom:0}
+.srow .nm{flex:1 1 140px;min-width:0;font-size:13px;font-weight:500}
+.srow .dt{font-family:var(--mono);font-size:10px;color:var(--ink2)}
+.drawer textarea{width:100%;min-height:72px;border:.75px solid var(--line);background:var(--input);font-family:var(--mono);font-size:11px;padding:8px;resize:vertical}
+.note{font-size:11.5px;color:var(--ink2);line-height:1.4}
+
+/* показатели */
+.panel{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:12px 0 10px;border-bottom:.75px solid var(--line)}
+@media(max-width:760px){.panel{position:static}}
+.gauges{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;background:var(--card);border:.75px solid var(--line)}
+.gauges>div{padding:13px 16px 11px;border-right:.75px solid var(--line);min-width:0}
 .gauges>div:last-child{border-right:0}
-.g .v{font-family:var(--mono);font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1;margin:9px 0 7px;color:var(--petrol);white-space:nowrap}
-.g.main .v{font-size:34px;color:var(--copper)}
-.g .d{font-size:11.5px;color:var(--brown);line-height:1.35}
+.g .v{font-family:var(--mono);font-size:23px;font-weight:500;letter-spacing:-.02em;line-height:1;margin:9px 0 7px;color:var(--petrol);white-space:nowrap}
+.g.main .v{font-size:32px;color:var(--copper)}
+.g .d{font-size:11.5px;color:var(--ink2);line-height:1.35}
 .g .d b{font-family:var(--mono);font-weight:500;color:var(--ink);white-space:nowrap}
 .g .d b.up{color:var(--petrol)}
 .g .d b.dn{color:var(--copper)}
-.g .sw{display:inline-flex;border:.75px solid var(--line);margin-top:8px}
-.g .sw button{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:0;background:transparent;color:var(--brown);cursor:pointer}
-.g .sw button.on{background:var(--petrol);color:var(--ivory)}
-/* шкала */
-.scale{position:relative;height:32px;margin:12px 6px 0}
-.scale .track{position:absolute;left:0;right:0;top:13px;height:3px;background:var(--sand)}
-.scale .zero{position:absolute;top:7px;width:1px;height:15px;background:var(--copper)}
-.scale .base{position:absolute;top:9px;width:11px;height:11px;border-radius:50%;border:1.5px solid var(--petrol);background:var(--paper);margin-left:-5.5px}
-.scale .now{position:absolute;top:8px;width:13px;height:13px;border-radius:50%;background:var(--copper);margin-left:-6.5px}
-.scale .lbl{position:absolute;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--brown)}
-.legend{font-size:11px;color:var(--brown);margin-top:6px;display:flex;gap:16px;flex-wrap:wrap}
-.mk{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--petrol);vertical-align:middle;margin-right:6px;background:var(--paper)}
-.mk.cu{border-color:var(--copper);background:var(--copper)}
-.mk.full{background:var(--petrol)}
-@media(max-width:980px){.gauges{grid-template-columns:1fr 1fr 1fr}.g.main{grid-column:1/-1;border-bottom:.75px solid var(--line)}}
-@media(max-width:640px){.gauges{grid-template-columns:1fr 1fr}.g.main{grid-column:1/-1}.g .v{font-size:20px}.g.main .v{font-size:30px}.panel{position:static}}
+.sw{display:inline-flex;border:.75px solid var(--line);margin-top:8px}
+.sw button{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:0;background:transparent;color:var(--ink2);cursor:pointer}
+.sw button.on{background:var(--petrol);color:var(--bg)}
+@media(max-width:980px){.gauges{grid-template-columns:1fr 1fr}.g.main{grid-column:1/-1;border-bottom:.75px solid var(--line)}.gauges>div{border-bottom:.75px solid var(--line)}}
+@media(max-width:640px){.g .v{font-size:20px}.g.main .v{font-size:28px}}
 
-/* ── РУЧКИ ── */
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;align-items:start}
+/* каскад */
+.section{margin-top:18px}
+.cascade{background:var(--card);border:.75px solid var(--line);padding:16px 18px 12px}
+.cascade-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.cascade-head h2{font-size:15px;font-weight:700}
+.svgbox{overflow-x:auto;margin-top:8px}
+.svgbox svg{display:block;width:100%;min-width:620px;height:auto}
+.wf-pos{fill:var(--petrol)}
+.wf-neg{fill:var(--card);stroke:var(--petrol);stroke-width:1.25}
+.wf-tot{fill:var(--ink)}
+.wf-fin{fill:var(--copper)}
+.wf-zero{stroke:var(--copper);stroke-dasharray:3 3}
+.wf-grid{stroke:var(--grid)}
+.wf-link{stroke:var(--muted);stroke-dasharray:2 3}
+.wf-t{font-family:var(--mono);font-size:10px;fill:var(--ink2)}
+.wf-v{font-family:var(--mono);font-size:11px;fill:var(--ink);font-weight:500}
+.wf-cap{font-family:var(--sans);font-size:11px;fill:var(--ink)}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;white-space:nowrap;font-size:11px;color:var(--ink2);margin-top:6px}
+.lg{display:inline-block;width:12px;height:9px;vertical-align:middle;margin-right:6px}
+.lg.pos{background:var(--petrol)}
+.lg.neg{border:1.25px solid var(--petrol);background:var(--card)}
+.lg.tot{background:var(--ink)}
+.lg.fin{background:var(--copper)}
+
+/* ручки */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;align-items:start}
 .cols>*{min-width:0}
-@media(max-width:760px){.cols{grid-template-columns:1fr}.wrap{padding:0 16px 40px}.hdr,.panel{margin:0 -16px;padding-left:16px;padding-right:16px}}
-.card{background:var(--paper);border:.75px solid var(--line);padding:16px 18px 14px}
+.stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+.card{background:var(--card);border:.75px solid var(--line);padding:16px 18px 14px;min-width:0}
 .card h2{font-size:14px;font-weight:700}
-.card .lead{font-size:12px;color:var(--brown);margin:3px 0 8px}
+.card .lead{font-size:12px;color:var(--ink2);margin:3px 0 4px}
 .grp{margin-top:12px}
-.grp .kick{display:flex;justify-content:space-between;padding-bottom:6px;border-bottom:.75px solid var(--line)}
-.row{display:grid;grid-template-columns:22px 1fr 112px;gap:10px;align-items:center;padding:7px 0;border-bottom:.75px solid var(--line)}
+.grp>.kick{display:flex;justify-content:space-between;gap:8px;padding-bottom:6px;border-bottom:.75px solid var(--line)}
+.row{display:grid;grid-template-columns:22px minmax(0,1fr) 112px;gap:10px;align-items:center;padding:7px 0;border-bottom:.75px solid var(--line)}
+.row.cl{grid-template-columns:22px minmax(0,1fr) 104px 96px}
 .row:last-child{border-bottom:0}
-.row.off .nm,.row.off .sub{color:var(--brown);opacity:.55}
+.row.off .nm,.row.off .sub{opacity:.5}
 .row .nm{font-size:13px;font-weight:500}
-.row .sub{font-size:11px;color:var(--brown);margin-top:1px;line-height:1.3}
-.row input[type=text]{width:100%;font-family:var(--mono);font-size:12.5px;text-align:right;padding:5px 7px;border:.75px solid var(--line);background:#fff;color:var(--ink);min-width:0}
-.row.off input[type=text]{color:var(--brown);background:var(--ivory)}
-.row .unit{font-family:var(--mono);font-size:9.5px;color:var(--brown);text-align:right;margin-top:2px;letter-spacing:.06em}
-@media(max-width:760px){.row{grid-template-columns:22px 1fr 96px}}
-.tg{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--petrol);background:transparent;cursor:pointer;padding:0;display:inline-block}
+.row .sub{font-size:11px;color:var(--ink2);margin-top:1px;line-height:1.3}
+.row input[type=text]{width:100%;font-family:var(--mono);font-size:12.5px;text-align:right;padding:5px 7px;border:.75px solid var(--line);background:var(--input);min-width:0}
+.row.off input[type=text]{opacity:.6}
+.unit{font-family:var(--mono);font-size:9px;color:var(--ink2);text-align:right;margin-top:2px;letter-spacing:.06em}
+@media(max-width:520px){.row{grid-template-columns:22px minmax(0,1fr) 92px}.row.cl{grid-template-columns:22px minmax(0,1fr) 84px 78px}}
+.tg{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--petrol);background:transparent;cursor:pointer;padding:0}
 .tg.on{background:var(--petrol)}
 .tg.cu{border-color:var(--copper)}
 .tg.cu.on{background:var(--copper)}
-.tot{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0 2px;margin-top:8px;border-top:1.5px solid var(--petrol)}
-.tot b{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--petrol)}
-.tot span{font-size:12.5px}
-.rm{font-family:var(--mono);font-size:9.5px;color:var(--brown);background:none;border:0;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;padding:0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--petrol);margin-left:4px}
+.rm{font-family:var(--mono);font-size:9.5px;color:var(--ink2);background:none;border:0;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;padding:0;text-decoration:underline}
 .rm:hover{color:var(--copper)}
-.addbar{margin-top:10px}
-.addbar .btn{width:100%;text-align:left}
-.addform{display:none;gap:8px;margin-top:8px;flex-wrap:wrap}
-.addform.open{display:flex}
-.addform input[type=text]{flex:1 1 160px;padding:7px 9px;border:.75px solid var(--line);background:#fff;font-size:12.5px;min-width:0}
-.addform input.n{flex:0 1 130px;font-family:var(--mono);text-align:right}
+.tot{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:10px 0 2px;margin-top:6px;border-top:1.5px solid var(--petrol)}
+.tot b{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--petrol);white-space:nowrap}
+.tot span{font-size:12.5px}
+.add{margin-top:8px}
+.addform{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.addform[hidden]{display:none!important}
+.addform input{flex:1 1 150px;padding:7px 9px;border:.75px solid var(--line);background:var(--input);font-size:12.5px;min-width:0}
+.addform input.n{flex:0 1 120px;font-family:var(--mono);text-align:right}
 .counter{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:.75px solid var(--line)}
-.counter .nm{font-size:13px;font-weight:500}
-.counter .sub{font-size:11px;color:var(--brown);margin-top:1px}
 .pm{display:inline-flex;align-items:center;border:.75px solid var(--petrol);flex:none}
 .pm button{width:34px;height:32px;border:0;background:transparent;color:var(--petrol);font-family:var(--mono);font-size:16px;cursor:pointer}
 .pm button:hover{background:var(--sand)}
-.pm b{font-family:var(--mono);font-size:15px;font-weight:500;min-width:40px;text-align:center;color:var(--copper)}
+.pm b{font-family:var(--mono);font-size:15px;font-weight:500;min-width:36px;text-align:center;color:var(--copper)}
+.flag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper);border:.75px solid var(--copper);padding:1px 5px;margin-left:6px;white-space:nowrap;vertical-align:1px}
 
-/* подсказка */
-.hint{margin-top:16px;background:var(--paper);border:.75px solid var(--copper)}
-.hint summary{color:var(--copper)}
-.hint .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 18px 16px}
-@media(max-width:760px){.hint .steps{grid-template-columns:1fr}}
-.hint .st{border-top:.75px solid var(--line);padding-top:10px}
-.hint .st .kick{display:block;margin-bottom:8px}
-.hint .st p{font-size:12.5px;line-height:1.45}
-.hint .mock{background:var(--ivory);border:.75px solid var(--line);padding:10px 12px;margin-bottom:10px;font-size:11.5px;display:flex;align-items:center;gap:10px}
-.hint .mock .fld{font-family:var(--mono);font-size:11px;padding:3px 6px;border:.75px solid var(--line);background:#fff}
-.hint .mock .fld.sand{background:var(--sand)}
-.hint .mock .arrow{color:var(--copper)}
-.hint .mock .big{font-family:var(--mono);font-size:16px;color:var(--copper)}
-.hint .mock .sm{font-size:10.5px;color:var(--brown)}
-.scale .off{position:absolute;top:22px;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--copper)}
 /* спойлеры */
-details{margin-top:16px;background:var(--paper);border:.75px solid var(--line)}
+details{margin-top:16px;background:var(--card);border:.75px solid var(--line)}
 summary{list-style:none;cursor:pointer;padding:12px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
 summary::-webkit-details-marker{display:none}
 summary .chev{width:0;height:0;border-left:5px solid var(--copper);border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .15s}
 details[open] summary .chev{transform:rotate(90deg)}
-details .body{padding:0 18px 16px}
-.ledger{width:100%;border-collapse:collapse}
+details .body{padding:0 18px 16px;overflow-x:auto}
+.ledger{width:100%;border-collapse:collapse;min-width:420px}
 .ledger td{padding:7px 0;border-bottom:.75px solid var(--line);font-size:12.5px;vertical-align:top}
-.ledger tr:last-child td{border-bottom:0}
-.ledger td.a{font-family:var(--mono);text-align:right;white-space:nowrap;padding-left:12px}
-.ledger td.a.neg{color:var(--copper)}
-.ledger tr.sum td{font-weight:700;border-top:1.5px solid var(--petrol);border-bottom:0;padding-top:10px}
-.ledger tr.sum td.a{color:var(--petrol)}
-.ledger .sub{display:block;font-size:11px;color:var(--brown)}
-.chart svg{width:100%;height:auto;display:block;max-width:640px}
-.note{font-size:11.5px;color:var(--brown);line-height:1.4;margin-top:8px}
-.ftr{margin-top:32px;padding-top:12px;border-top:.75px solid var(--line);font-size:11.5px;color:var(--brown);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--petrol-d);color:var(--ivory);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;display:none;z-index:9}
-</style>
-</head>
-<body>
+.ledger td.a{font-family:var(--mono);text-align:right;white-space:nowrap;padding-left:12px;font-variant-numeric:tabular-nums}
+.ledger tr.sum td{font-weight:700;border-top:1.5px solid var(--petrol);padding-top:10px}
+.ledger .sub{display:block;font-size:11px;color:var(--ink2);font-weight:400}
+.assume{margin:0;padding-left:18px;font-size:12.5px;line-height:1.5;max-width:860px}
+.assume li{margin-bottom:6px}
+.ftr{margin-top:28px;padding-top:12px;border-top:.75px solid var(--line);font-size:11.5px;color:var(--ink2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--hdr-bg);color:var(--hdr-fg);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;z-index:9}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style></head><body>
+
 <div class="wrap">
   <div class="hdr"><div class="hdr-in">
-    <div><span class="logo"><span class="a"></span><span class="l"></span><span class="b"></span></span>
+    <div>
+      <span class="logo" aria-hidden="true"><i class="a"></i><i class="l"></i><i class="b"></i></span>
+      <div class="kick" style="margin-top:12px">Фонд-акселератор · один месяц в стационарном режиме</div>
       <h1>Калькулятор контура</h1>
-      <div class="sub">Один месяц в стационарном режиме: если всё так — сколько остаётся. Без НДС, ставки как платим. Сверху — показатели и отклонение от базы 14.09.2026, снизу — ручки.</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" onclick="copyLink()">Скопировать ссылку на сценарий</button>
-      <button class="btn" onclick="resetAll()">Вернуть базу</button>
+      <div class="sub">Сколько платящих клиентов акселерации покрывают команду, сколько стоит портфель без подписки и что добавляют мастермайнды. Без НДС, до налога на прибыль, ставки как платим. База — 03.10.2026.</div>
     </div>
+    <button class="btn" type="button" id="btnReset">Вернуть базу 03.10</button>
   </div></div>
 
-  <div class="panel"><div class="panel-in" id="panel"></div></div>
+  <div class="scen">
+    <div class="cur">Сценарий: <b id="curName">База 03.10</b> <span class="note" id="curState"></span></div>
+    <div class="spacer"></div>
+    <input type="text" id="scenName" placeholder="Название сценария" aria-label="Название сценария">
+    <button class="btn" type="button" id="btnSave">Сохранить</button>
+    <button class="btn cu" type="button" id="btnDrawer" aria-expanded="false">Сценарии и обмен</button>
+  </div>
+  <div class="drawer" id="drawer" hidden>
+    <div>
+      <h3>Сохранённые на этом устройстве</h3>
+      <div class="slist" id="slist"></div>
+      <p class="note" style="margin-top:8px">Сценарии хранятся в этом браузере. Чтобы передать сценарий другому человеку, скопируй код справа и отправь ему.</p>
+    </div>
+    <div>
+      <h3>Поделиться сценарием</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" type="button" id="btnCopyCode">Скопировать код</button>
+        <button class="btn" type="button" id="btnCopyLink">Скопировать ссылку</button>
+      </div>
+      <p class="note" style="margin:8px 0 10px">Ссылка с вшитым сценарием работает на GitHub Pages. Код работает везде: получатель вставляет его ниже.</p>
+      <label class="kick" for="importCode">Вставить код сценария</label>
+      <textarea id="importCode" placeholder="Вставь код, который тебе прислали"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <button class="btn" type="button" id="btnImport">Открыть сценарий из кода</button>
+        <span class="note" id="importMsg"></span>
+      </div>
+    </div>
+  </div>
 
-  <details class="hint" id="hint" open><summary><span class="chev"></span>Как пользоваться — три шага</summary>
-    <div class="steps">
-      <div class="st"><span class="kick cu">1 · включить или выключить</span>
-        <div class="mock"><span class="tg on" style="cursor:default"></span><span>платим</span><span class="arrow">→</span><span class="tg" style="cursor:default"></span><span>не платим</span></div>
-        <p>Круг перед человеком или клиентом. Закрашен — в расчёте, пустой — нет. Клик переключает. Сумма при этом не стирается — можно вернуть.</p></div>
-      <div class="st"><span class="kick cu">2 · поменять сумму или число</span>
-        <div class="mock"><span class="fld">250 000</span><span class="arrow">→</span><span class="fld sand">300 000</span><span class="sm">Enter</span></div>
-        <p>Впиши новую сумму в поле и нажми Enter или щёлкни вне поля. Новых клиентов добавляют кнопки минус и плюс. «+ Добавить сотрудника» — для найма, которого ещё нет.</p></div>
-      <div class="st"><span class="kick cu">3 · смотреть на панель</span>
-        <div class="mock"><span class="big">−442 904 ₽</span><span class="sm">база −442 904 → <b style="color:var(--petrol)">+150 000</b></span></div>
-        <p>Верхняя панель пересчитывается на каждый клик. Под каждой цифрой — база 14.09 и отклонение от неё: петроль — лучше, медь — хуже. «Вернуть базу» сбрасывает всё, «Скопировать ссылку» сохраняет сценарий.</p></div>
-    </div></details>
+  <div class="panel" id="panel"></div>
+
+  <div class="section cascade">
+    <div class="cascade-head">
+      <h2>Из чего складывается месяц</h2>
+      <span class="kick" id="cascadeNote"></span>
+    </div>
+    <div class="svgbox" id="wf"></div>
+    <div class="legend">
+      <span><span class="lg pos"></span>приносит деньги</span>
+      <span><span class="lg neg"></span>расход</span>
+      <span><span class="lg tot"></span>промежуточный итог</span>
+      <span><span class="lg fin"></span>остаётся в месяц</span>
+    </div>
+  </div>
 
   <div class="cols">
-    <div class="card" id="teamCard"></div>
-    <div class="card" id="clientCard"></div>
+    <div class="stack">
+      <div class="card" id="teamCard"></div>
+    </div>
+    <div class="stack">
+      <div class="card" id="clientCard"></div>
+      <div class="card" id="portCard"></div>
+      <div class="card" id="mmCard"></div>
+    </div>
   </div>
 
-  <details><summary><span class="chev"></span>Как посчитано — ведомость от выручки до результата</summary><div class="body" id="ledger"></div></details>
-  <details><summary><span class="chev"></span>График — результат в месяц от числа клиентов</summary><div class="body" id="chartBox"></div></details>
+  <details id="dLedger"><summary><span class="chev"></span>Ведомость: от выручки до результата</summary><div class="body" id="ledger"></div></details>
+  <details id="dCurve"><summary><span class="chev"></span>Результат в месяц от числа платящих клиентов</summary><div class="body" id="curve"></div></details>
+  <details id="dAssume"><summary><span class="chev"></span>Допущения базы 03.10 и что не учтено</summary><div class="body">
+    <ul class="assume">
+      <li><b>Подписка.</b> С ноября платят шестеро: Бражников (старый тариф 5 млн), Лебедев, Новик-Качан, Козырев, Косолапов, Спирина (по 6 млн). Бобрук выходит в октябре — выключен. Иванова, Изосина и Цыганов за акселерацию не платят. Квартальные платежи пересчитаны в месячный эквивалент.</li>
+      <li><b>Трекеры.</b> 100 000 за клиента при 4–5 встречах, меньше четырёх — 25 000 за встречу. Сабреев на NOIMA — 80 000 (меньше четырёх встреч — 20 000 за встречу). Трекер Диплодока не утверждён, временно стоит Алёшин.</li>
+      <li><b>Центр компетенций.</b> Боронина — 25 000 за клиента, фикса нет. По платящим — в вкладе подписки, по компаниям без подписки — в портфеле (оценка 4 × 25 000).</li>
+      <li><b>Команда.</b> Дубровин и Ефимчук — 300 000 + 7% НПД; у Дубровина внутри Амина. Бердыев — 300 000 начислением, налог внутри.</li>
+      <li><b>Сервисы.</b> Компенсации Бердыеву — сентябрьский акт 88 748 плюс две подписки Claude Code, добавленные с сентября (оценка по 200 $, курс 82, НПД 6%). Яндекс.Облако оплачивается фондом напрямую. Сверху запас до 210 000 на новые подписки.</li>
+      <li><b>Административные.</b> С июля регулярного платежа за юристов и бухгалтерию нет: платёж УК 100 000 последний раз ушёл 03.06, дальше только разовые оплаты Силину и Инфинансу. В базе норма 100 000 и банковские комиссии 10 000. Строка УК выключена.</li>
+      <li><b>Портфель без подписки.</b> Трекинг Дубровина 600 000 — его сентябрьская выплата за август, состав по компаниям не подтверждён. Алёшин по WELCS — три встречи.</li>
+      <li><b>Мастермайнды.</b> Два события в год, вклад делится на 12. Август — факт 10 538 846 (выручка без НДС минус прямые расходы); бонусы ОП за гостей в этой цифре не вычтены. Декабрь — цель 17 476 000 × % сбора, минус смета Антальи 4 545 500 и комиссии 10% от выручки с НДС. На 01.10 собрано около 18% цели с учётом выставленных счетов.</li>
+      <li><b>Не учтено.</b> Разовые расходы на нового клиента: 35 000 бонус ОП за активацию и 100 000 дьюдил при переходе к сделке. Остаток по договорам Силина 175 000. Калита и буферы маркетинга и продукта выключены. Налог на прибыль показан справочно, НДС к уплате не моделируется.</li>
+    </ul></div></details>
 
-  <div class="ftr"><span>Считает только акселерацию; мастермайнды — переключателем в панели как усреднённый вклад. CAC, дьюдил, юристы, разовые расходы не учтены.</span><span>v2.1 · 14.09.2026</span></div>
+  <div class="ftr"><span>Считает один месяц. Платежи по кассе, кварталы и ММ разложены равномерно. Расходы на людей — начислением с налогом.</span><span>v3.0 · база 03.10.2026</span></div>
 </div>
-<div class="toast" id="toast">Ссылка скопирована</div>
+<div class="toast" id="toast" hidden></div>
 
 <script>
-/* ═══════════ БАЗА 14.09.2026 — те же значения, что в листе «Что_если» ═══════════ */
+/* ═══════════ БАЗА 03.10.2026 ═══════════ */
 const BASE = {
-  vat: 0.22, tax: 0.25, priceNew: 500000, priceOld: 416667,
-  trackerRate: 100000, ckRate: 25000, newClients: 0,
-  mmOn: false, mmYear: 21077692,
+  name: 'База 03.10',
+  vat: 0.22, tax: 0.25, price: 500000, trk: 100000, ck: 25000, newN: 0,
+  mm: { on: false, aug: 10538846, decTarget: 17476000, decPct: 100, decCost: 4545500, decComm: 0.10 },
   team: [
-    {g:'Управление', n:'Дубровин Евгений', s:'CEO', v:268817, on:true},
-    {g:'Управление', n:'Дубровин — трекерство и встречи как руководитель', s:'в среднем 500–600 тыс.; внутри Иванова и пост-опционные', v:550000, on:true},
-    {g:'Управление', n:'Амина', s:'коммуникации и операционка, через Дубровина', v:53763, on:true},
-    {g:'Управление', n:'Ефимчук Екатерина', s:'CPO / COO', v:268817, on:true},
-    {g:'Управление', n:'Белов Артём', s:'CFO', v:250000, on:true},
-    {g:'Управление', n:'Карпова Настя', s:'проджект, с октября', v:100000, on:true},
-    {g:'Сервис и продажи', n:'Надршина Эля', s:'аккаунт ЦК', v:85106, on:true},
-    {g:'Сервис и продажи', n:'Хмелинин Сергей', s:'МОП, фикс — бонусы от продаж не здесь', v:85106, on:true},
-    {g:'Сервис и продажи', n:'Айнабекова Ольга', s:'продажи, фикс с сентября', v:85106, on:true},
-    {g:'Сервис и продажи', n:'Бойбобоев Амир', s:'СММ', v:31915, on:true},
-    {g:'Сервис и продажи', n:'Калита Тимофей', s:'конкурентная разведка, проектно', v:53191, on:false},
-    {g:'IT и прочий фикс', n:'Бердяев Александр', s:'CIO, платформа', v:212766, on:true},
-    {g:'IT и прочий фикс', n:'Компенсации Бердяеву', s:'инструменты', v:77878, on:true},
-    {g:'IT и прочий фикс', n:'Сервисы', s:'Claude, Яндекс, Wazzup, Google, амоЦРМ', v:135871, on:true},
-    {g:'IT и прочий фикс', n:'Административные', s:'юристы, Консоль, Zoom — норма', v:120000, on:true},
-    {g:'Расходы без выручки', n:'Островский — встречи Алёшина', s:'не платит; в августе 3 встречи', v:75000, on:true},
+    {id:'t1', g:'Управление', n:'Дубровин Евгений', s:'CEO · вместе с Аминой · 300 000 + 7%', v:322581, on:true},
+    {id:'t2', g:'Управление', n:'Ефимчук Екатерина', s:'CPO / COO · 300 000 + 7%', v:322581, on:true},
+    {id:'t3', g:'Управление', n:'Белов Артём', s:'CFO', v:250000, on:true},
+    {id:'t4', g:'Управление', n:'Карпова Анастасия', s:'проджект, с октября', v:100000, on:true},
+    {id:'t5', g:'Продажи и сервис', n:'Хмелинин Сергей', s:'МОП, фикс · бонусы от продаж не здесь', v:85106, on:true},
+    {id:'t6', g:'Продажи и сервис', n:'Айнабекова Ольга', s:'МОП, фикс', v:85106, on:true},
+    {id:'t7', g:'Продажи и сервис', n:'Надршина Эля', s:'аккаунт ЦК', v:85106, on:true},
+    {id:'t8', g:'Продажи и сервис', n:'Бойбобоев Амир', s:'СММ', v:31915, on:true},
+    {id:'t9', g:'Продажи и сервис', n:'Калита Тимофей', s:'конкурентная разведка, проектно · включать в месяцы с заказом', v:53191, on:false},
+    {id:'t10', g:'Платформа и сервисы', n:'Бердыев Александр', s:'CIO · 300 000 начислением', v:300000, on:true},
+    {id:'t11', g:'Платформа и сервисы', n:'Компенсации Бердыеву', s:'Claude Code ×4, OpenAI, Zoom, ВПН · акт сен 88 748 + 2 подписки', v:123642, on:true},
+    {id:'t12', g:'Платформа и сервисы', n:'Яндекс.Облако', s:'сервер платформы, оплата фондом', v:15000, on:true},
+    {id:'t13', g:'Платформа и сервисы', n:'Claude — Ефимчук', s:'149 999 ₸ в месяц', v:28000, on:true},
+    {id:'t14', g:'Платформа и сервисы', n:'Claude — Калита', s:'подписка', v:12500, on:true},
+    {id:'t15', g:'Платформа и сервисы', n:'амоЦРМ', s:'годовая оплата 59 950 + квартальная 7 188', v:7008, on:true},
+    {id:'t16', g:'Платформа и сервисы', n:'Wazzup', s:'Telegram для ОП', v:4000, on:true},
+    {id:'t17', g:'Платформа и сервисы', n:'Google Workspace', s:'20 $', v:1640, on:true},
+    {id:'t18', g:'Платформа и сервисы', n:'Запас на новые подписки', s:'доводит сервисы до 210 000', v:18210, on:true},
+    {id:'t19', g:'Административные', n:'Юристы, бухгалтерия, дьюдил', s:'норма · с июля только разовые оплаты', v:100000, on:true},
+    {id:'t20', g:'Административные', n:'Банковские комиссии', s:'Консоль, Точка', v:10000, on:true},
+    {id:'t21', g:'Административные', n:'Услуги УК', s:'платёж остановлен после июня', v:100000, on:false},
+    {id:'t22', g:'Административные', n:'Маркетинг и продукт — буфер', s:'бюджет плана, факта с июня нет', v:71428, on:false},
   ],
   clients: [
-    {n:'Бражников / Оками', s:'5 млн · трекер Гор', tariff:'old', tracker:100000, on:true},
-    {n:'Бобрук / 144 Капитал', s:'5 млн · трекер Гор · продление в декабре', tariff:'old', tracker:100000, on:true},
-    {n:'Иванова / Напор', s:'6 млн · трекер Дубровин — внутри его 550 000', tariff:'new', tracker:0, on:true},
-    {n:'Лебедев', s:'6 млн · трекер Алёшин', tariff:'new', tracker:100000, on:true},
-    {n:'Новик-Качан', s:'6 млн помесячно · трекер Алёшин', tariff:'new', tracker:100000, on:true},
-    {n:'Козырев / Система 10Х', s:'6 млн · трекер Алёшин', tariff:'new', tracker:100000, on:true},
-    {n:'Косолапов', s:'6 млн помесячно · трекер не назначен, ставка по умолчанию', tariff:'new', tracker:100000, on:true},
+    {id:'c1', g:'pay', n:'Бражников — Лига Миров', s:'старый тариф 5 млн · трекер Гор', price:416667, trk:100000, on:true},
+    {id:'c2', g:'pay', n:'Лебедев — Дом Гирлянд', s:'6 млн · трекер Алёшин', price:500000, trk:100000, on:true},
+    {id:'c3', g:'pay', n:'Новик-Качан — BALORI', s:'помесячно · трекер Алёшин', price:500000, trk:100000, on:true},
+    {id:'c4', g:'pay', n:'Козырев — Система 10Х', s:'6 млн · трекер Алёшин', price:500000, trk:100000, on:true},
+    {id:'c5', g:'pay', n:'Косолапов — NOIMA', s:'помесячно · трекер Сабреев 80 000', price:500000, trk:80000, on:true},
+    {id:'c6', g:'pay', n:'Спирина — Диплодок', s:'помесячно · трекер не утверждён, стоит Алёшин', price:500000, trk:100000, on:true},
+    {id:'c7', g:'pay', n:'Бобрук — 144 Капитал', s:'старый тариф · трекер Гор · выходит в октябре', price:416667, trk:100000, on:false},
+    {id:'p1', g:'pipe', n:'Годуновы Денис и Дмитрий — Мебель Стайл', s:'комплектующие для мебели · ОП Ольга', price:500000, trk:100000, on:false},
+    {id:'p2', g:'pipe', n:'Бондаренко Алексей — Карета Мобилити', s:'ОП Ольга', price:500000, trk:100000, on:false},
+    {id:'p3', g:'pipe', n:'Алексеюк Елена — Sointera', s:'косметика для волос · ОП Ольга', price:500000, trk:100000, on:false},
+    {id:'p4', g:'pipe', n:'Скобеев Константин и партнёр', s:'SEO / SERM · ОП Сергей', price:500000, trk:100000, on:false},
+  ],
+  port: [
+    {id:'f1', n:'Дубровин — Oazis, Рыбак, Напор', s:'трекинг по встречам · выплата сен за авг, состав не подтверждён', v:600000, on:true},
+    {id:'f2', n:'Алёшин — WELCS', s:'3 встречи × 25 000', v:75000, on:true},
+    {id:'f3', n:'Боронина — компании без подписки', s:'оценка: 4 × 25 000', v:100000, on:true},
   ],
 };
+const GROUPS_TEAM = ['Управление','Продажи и сервис','Платформа и сервисы','Административные'];
+const LS_KEY = 'fond_model_scenarios_v3';
 
-/* ── расчёт ── */
+/* ═══════════ расчёт ═══════════ */
 function calcOf(s){
-  const net = g => g/(1+s.vat);
-  const fixed = s.team.filter(t=>t.on).reduce((a,t)=>a+t.v,0);
-  const groups={}; s.team.forEach(t=>{ if(!groups[t.g]) groups[t.g]=0; if(t.on) groups[t.g]+=t.v; });
-  const active=s.clients.filter(c=>c.on);
-  const revGross = active.reduce((a,c)=>a+(c.tariff==='old'?s.priceOld:s.priceNew),0) + s.newClients*s.priceNew;
+  const net = g => g / (1 + s.vat);
+  const fixed = s.team.filter(t => t.on).reduce((a, t) => a + t.v, 0);
+  const groups = {};
+  s.team.forEach(t => { groups[t.g] = (groups[t.g] || 0) + (t.on ? t.v : 0); });
+  const active = s.clients.filter(c => c.on);
+  const nPay = active.filter(c => c.g === 'pay').length;
+  const nPipe = active.filter(c => c.g === 'pipe').length;
+  const nAll = active.length + s.newN;
+  const revGross = active.reduce((a, c) => a + c.price, 0) + s.newN * s.price;
   const revNet = net(revGross);
-  const nPaying = active.length + s.newClients;
-  const trackers = active.reduce((a,c)=>a+c.tracker,0) + s.newClients*s.trackerRate;
-  const ck = nPaying*s.ckRate;
-  const contribution = revNet - trackers - ck;
-  const result = contribution - fixed;
-  const mm = s.mmOn ? s.mmYear/12 : 0;
-  const total = result + mm;
-  const afterTax = total>0 ? total*(1-s.tax) : total;
-  const perNew = net(s.priceNew) - s.trackerRate - s.ckRate;
-  const breakeven = perNew>0 ? Math.max(0, Math.ceil((fixed - mm)/perNew)) : null;
-  const gap = perNew>0 ? (total>=0 ? Math.floor(total/perNew) : -Math.ceil(-total/perNew)) : null;
-  const curve=[]; for(let n=0;n<=16;n++) curve.push({n, y:n*perNew - fixed + mm});
-  return {fixed,groups,revGross,revNet,nPaying,trackers,ck,contribution,result,mm,total,afterTax,perNew,breakeven,gap,curve};
+  const trackers = active.reduce((a, c) => a + c.trk, 0) + s.newN * s.trk;
+  const ck = nAll * s.ck;
+  const contrib = revNet - trackers - ck;
+  const accel = contrib - fixed;
+  const port = s.port.filter(p => p.on).reduce((a, p) => a + p.v, 0);
+  const oper = accel - port;
+  const decGross = s.mm.decTarget * s.mm.decPct / 100;
+  const decContrib = net(decGross) - s.mm.decCost - decGross * s.mm.decComm;
+  const mmYear = s.mm.aug + decContrib;
+  const mm = s.mm.on ? mmYear / 12 : 0;
+  const total = oper + mm;
+  const afterTax = total > 0 ? total * (1 - s.tax) : total;
+  const perNew = net(s.price) - s.trk - s.ck;
+  const be = need => perNew > 0 ? Math.max(0, Math.ceil(need / perNew)) : null;
+  const beCore = be(fixed - (s.mm.on ? mm : 0));
+  const bePort = be(fixed + port - (s.mm.on ? mm : 0));
+  const gapCore = accel >= 0 ? 0 : (perNew > 0 ? Math.ceil(-accel / perNew) : null);
+  const gapOper = oper >= 0 ? 0 : (perNew > 0 ? Math.ceil(-oper / perNew) : null);
+  return { fixed, groups, nPay, nPipe, nAll, revGross, revNet, trackers, ck, contrib, accel,
+           port, oper, decGross, decContrib, mmYear, mm, total, afterTax, perNew, beCore, bePort, gapCore, gapOper };
 }
-let S = JSON.parse(JSON.stringify(BASE));
+
+/* ═══════════ утилиты ═══════════ */
+const clone = o => JSON.parse(JSON.stringify(o));
+const Nf = n => (n == null || isNaN(n)) ? '—' : new Intl.NumberFormat('ru-RU').format(Math.round(n)).replace(/-/g, '−');
+const Mf = n => (n / 1e6).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/-/g, '−');
+const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const numIn = v => { const n = parseFloat(String(v).replace(/[\s ]/g, '').replace(',', '.').replace('−', '-')); return isNaN(n) ? 0 : n; };
+const uid = p => p + Math.random().toString(36).slice(2, 8);
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 1800); }
+
+let S = clone(BASE);
 const BASE_R = calcOf(BASE);
-const calc = () => calcOf(S);
+let dirty = false;
 
-/* ── утилиты ── */
-const Nf = n => (n==null||isNaN(n))?'—':new Intl.NumberFormat('ru-RU').format(Math.round(n)).replace(/-/g,'−');
-const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const numIn = v => { const n=parseFloat(String(v).replace(/[\s\u00a0]/g,'').replace(',','.')); return isNaN(n)?0:n; };
-
-/* ── состояние в ссылке ── */
-function encodeState(){
-  const c={ t:S.team.map(x=>[x.on?1:0,x.v,x.n,x.s,x.g,x.custom?1:0]), c:S.clients.map(x=>[x.on?1:0,x.tracker,x.tariff]),
-    n:S.newClients, tr:S.trackerRate, ck:S.ckRate, mm:S.mmOn?1:0, my:S.mmYear };
-  c.h = document.getElementById('hint').open?1:0;
-  return btoa(unescape(encodeURIComponent(JSON.stringify(c))));
+/* ═══════════ сценарии: локально + код ═══════════ */
+function lsRead(){ try { const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
+function lsWrite(list){ try { localStorage.setItem(LS_KEY, JSON.stringify(list)); return true; } catch(e){ return false; } }
+function encodeState(st){ return btoa(unescape(encodeURIComponent(JSON.stringify(st)))); }
+function decodeState(code){
+  try {
+    const st = JSON.parse(decodeURIComponent(escape(atob(String(code).trim()))));
+    if (!st || !Array.isArray(st.team) || !Array.isArray(st.clients) || !Array.isArray(st.port)) return null;
+    const out = Object.assign(clone(BASE), st);
+    out.mm = Object.assign(clone(BASE.mm), st.mm || {});
+    return out;
+  } catch(e){ return null; }
 }
-function onHint(){ pushState(); }
-function decodeState(h){
-  try{
-    const c=JSON.parse(decodeURIComponent(escape(atob(h))));
-    const st=JSON.parse(JSON.stringify(BASE));
-    st.team=c.t.map(a=>({on:!!a[0],v:a[1],n:a[2],s:a[3],g:a[4],custom:!!a[5]}));
-    c.c.forEach((a,i)=>{ if(st.clients[i]){st.clients[i].on=!!a[0];st.clients[i].tracker=a[1];st.clients[i].tariff=a[2];} });
-    st.newClients=c.n; st.trackerRate=c.tr; st.ckRate=c.ck; st.mmOn=!!c.mm; st.mmYear=c.my;
-    if(c.h===0) document.getElementById('hint').open=false;
-    return st;
-  }catch(e){ return null; }
+function saveScenario(){
+  const inp = document.getElementById('scenName');
+  const name = inp.value.trim() || S.name || 'Без названия';
+  S.name = name;
+  const list = lsRead().filter(x => x.name !== name);
+  list.unshift({ name, at: new Date().toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }), code: encodeState(S) });
+  const ok = lsWrite(list);
+  dirty = false; inp.value = '';
+  render();
+  toast(ok ? 'Сценарий сохранён' : 'Браузер не дал сохранить — скопируй код');
 }
-function pushState(){ history.replaceState(null,'','#'+encodeState()); }
-function copyLink(){ pushState(); navigator.clipboard.writeText(location.href).then(()=>{ const t=document.getElementById('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1600); }); }
-function resetAll(){ S=JSON.parse(JSON.stringify(BASE)); history.replaceState(null,'',location.pathname); render(); }
+let pendingDel = null;
+function renderList(){
+  const list = lsRead();
+  const box = document.getElementById('slist');
+  if (!list.length){ box.innerHTML = '<p class="note">Сохранённых сценариев пока нет. Измени ручки, впиши название и нажми «Сохранить».</p>'; return; }
+  box.innerHTML = list.map((x, i) => `<div class="srow"><span class="nm">${esc(x.name)}</span><span class="dt">${esc(x.at)}</span>
+    <button class="btn sm" type="button" data-open="${i}">Открыть</button>
+    <button class="btn sm cu" type="button" data-del="${i}">${pendingDel === i ? 'Точно удалить?' : 'Удалить'}</button></div>`).join('');
+}
+function openScenario(i){
+  const x = lsRead()[i]; if (!x) return;
+  const st = decodeState(x.code); if (!st){ toast('Сценарий повреждён'); return; }
+  S = st; S.name = x.name; dirty = false; render(); toast('Открыт: ' + x.name);
+}
+function delScenario(i){
+  if (pendingDel !== i){ pendingDel = i; renderList(); return; }
+  const list = lsRead(); list.splice(i, 1); lsWrite(list); pendingDel = null; renderList(); toast('Удалено');
+}
+function copyText(txt, okMsg){
+  const fallback = () => { const ta = document.getElementById('importCode'); ta.value = txt; ta.focus(); ta.select(); toast('Скопируй выделенный текст вручную'); };
+  try { navigator.clipboard.writeText(txt).then(() => toast(okMsg), fallback); } catch(e){ fallback(); }
+}
 
-/* ── панель ── */
-function delta(now, base, fmt=Nf, lowerIsBetter=false){
-  const d=now-base; if(Math.abs(d)<0.5) return `<b>как в базе</b>`;
-  const good = lowerIsBetter ? d<0 : d>0;
-  return `база ${fmt(base)} → <b class="${good?'up':'dn'}">${(d>0?'+':'−')+fmt(Math.abs(d))}</b>`;
+/* ═══════════ панель ═══════════ */
+function delta(now, base, fmt = Nf, lowerIsBetter = false){
+  if (now == null || base == null) return '';
+  const d = now - base; if (Math.abs(d) < 0.5) return 'как в базе';
+  const good = lowerIsBetter ? d < 0 : d > 0;
+  return `база ${fmt(base)} → <b class="${good ? 'up' : 'dn'}">${(d > 0 ? '+' : '−') + fmt(Math.abs(d))}</b>`;
 }
 function renderPanel(r){
-  const b=BASE_R;
-  const gapTxt = g => g==null?'—':(g>=0?`запас ${g}`:`нужно ещё ${-g}`);
-  const lo=-1500000, hi=3000000;
-  const pos = v => Math.max(0,Math.min(100,(v-lo)/(hi-lo)*100));
-  document.getElementById('panel').innerHTML=`
+  const b = BASE_R;
+  const gapTxt = g => g == null ? '—' : (g === 0 ? 'покрыто' : `не хватает ${g}`);
+  document.getElementById('panel').innerHTML = `
   <div class="gauges">
-    <div class="g main"><span class="kick cu">${r.total>=0?'Остаётся в месяц':'Не хватает в месяц'}</span>
+    <div class="g main"><span class="kick cu">${r.total >= 0 ? 'Остаётся в месяц' : 'Не хватает в месяц'}</span>
       <div class="v">${Nf(r.total)} ₽</div>
-      <div class="d">${delta(r.total,b.total)}${r.total>0?` · после налога ${Nf(r.afterTax)}`:''}</div>
-      <div class="sw"><button class="${S.mmOn?'':'on'}" onclick="setMM(false)">без ММ</button><button class="${S.mmOn?'on':''}" onclick="setMM(true)">с ММ</button></div></div>
-    <div class="g"><span class="kick">Безубыточность</span><div class="v">${r.breakeven==null?'—':r.breakeven}</div><div class="d">клиентов нового тарифа${S.mmOn?' — с учётом ММ':''}<br>${delta(r.breakeven,b.breakeven,x=>x,true)}</div></div>
-    <div class="g"><span class="kick">Запас / недобор</span><div class="v">${r.gap==null?'—':(r.gap>=0?'+':'')+r.gap}</div><div class="d">${gapTxt(r.gap)}<br>в базе — ${gapTxt(b.gap)}</div></div>
-    <div class="g"><span class="kick">Фикс в месяц</span><div class="v">${Nf(r.fixed)}</div><div class="d">${delta(r.fixed,b.fixed,Nf,true)}</div></div>
-    <div class="g"><span class="kick">Платящих клиентов</span><div class="v">${r.nPaying}</div><div class="d">без НДС ${Nf(r.revNet)}<br>${delta(r.nPaying,b.nPaying,x=>x)}</div></div>
-  </div>
-  <div class="scale">
-    <div class="track"></div>
-    <div class="zero" style="left:${pos(0)}%"></div><div class="lbl" style="left:${pos(0)}%;top:-3px;transform:translateX(-50%)">0</div>
-    <div class="lbl" style="left:0;top:21px">−1,5 млн</div><div class="lbl" style="right:0;top:21px">+3 млн</div>
-    <div class="base" style="left:${pos(b.total)}%" title="база"></div>
-    <div class="now" style="left:${pos(r.total)}%" title="сейчас"></div>
-    ${r.total<lo?`<div class="off" style="left:0">за шкалой ←</div>`:''}${r.total>hi?`<div class="off" style="right:0">→ за шкалой</div>`:''}
-  </div>
-  <div class="legend"><span><span class="mk cu"></span>сейчас</span><span><span class="mk"></span>база 14.09 — ${Nf(b.total)} ₽</span><span>медная риска — ноль</span></div>`;
+      <div class="d">${delta(r.total, b.total)}${r.total > 0 ? ` · после налога ${Nf(r.afterTax)}` : ''}</div>
+      <div class="sw" role="group" aria-label="Мастермайнды"><button type="button" class="${S.mm.on ? '' : 'on'}" data-mm="0">без ММ</button><button type="button" class="${S.mm.on ? 'on' : ''}" data-mm="1">с ММ</button></div></div>
+    <div class="g"><span class="kick">Акселерация</span><div class="v">${Nf(r.accel)}</div><div class="d">подписка минус ядро<br>${delta(r.accel, b.accel)}</div></div>
+    <div class="g"><span class="kick">Платящих</span><div class="v">${r.nAll}</div><div class="d">${r.nPipe ? `в т.ч. ${r.nPipe} из заходящих · ` : ''}без НДС ${Nf(r.revNet)}<br>${delta(r.nAll, b.nAll, x => x)}</div></div>
+    <div class="g"><span class="kick">Безубыточность</span><div class="v">${r.beCore ?? '—'} / ${r.bePort ?? '—'}</div><div class="d">клиентов: ядро / ядро + портфель${S.mm.on ? ', с учётом ММ' : ''}<br>ядро: ${gapTxt(r.gapCore)} · с портфелем: ${gapTxt(r.gapOper)}</div></div>
+    <div class="g"><span class="kick">Фикс ядра</span><div class="v">${Nf(r.fixed)}</div><div class="d">команда, сервисы, админ<br>${delta(r.fixed, b.fixed, Nf, true)}</div></div>
+  </div>`;
 }
 
-/* ── ручки ── */
-const tg = (on, act, cu) => `<button class="tg ${on?'on':''} ${cu?'cu':''}" type="button" aria-label="${on?'выключить':'включить'}" onclick="${act}"></button>`;
-function renderTeam(r){
-  const groups=[...new Set(S.team.map(t=>t.g))];
-  let html=`<h2>Команда и фикс</h2><div class="lead">Круг закрашен — платим. Сумму правь в поле и подтверди Enter.</div>`;
-  groups.forEach(g=>{
-    html+=`<div class="grp"><span class="kick"><span>${esc(g)}</span><span>${Nf(r.groups[g]||0)} ₽</span></span>`;
-    S.team.forEach((t,i)=>{ if(t.g!==g) return;
-      html+=`<div class="row ${t.on?'':'off'}">${tg(t.on,`toggleTeam(${i})`,g==='Расходы без выручки')}
-        <div><div class="nm">${esc(t.n)}</div><div class="sub">${esc(t.s)}${t.custom?` · <button class="rm" onclick="removeTeam(${i})">убрать</button>`:''}</div></div>
-        <div><input type="text" value="${Nf(t.v)}" onchange="setTeam(${i},this.value)" aria-label="сумма"><div class="unit">₽ / мес</div></div></div>`;
-    });
-    html+=`</div>`;
+/* ═══════════ каскад ═══════════ */
+function renderWaterfall(r){
+  const steps = [
+    { lab:'Вклад подписки', sub:`${r.nAll} платящих`, kind:'pos', v:r.contrib },
+    { lab:'Ядро', sub:'фикс', kind:'neg', v:-r.fixed },
+    { lab:'Акселерация', sub:'итог слоя', kind:'tot', v:r.accel, total:true },
+    { lab:'Портфель', sub:'без подписки', kind:'neg', v:-r.port },
+    { lab:'Операционный', sub:'без ММ', kind:'tot', v:r.oper, total:true },
+    { lab:'Мастермайнды', sub:S.mm.on ? '2 в год ÷ 12' : 'выключены', kind:'pos', v:r.mm },
+    { lab:'Остаётся', sub:'до налога', kind:'fin', v:r.total, total:true },
+  ];
+  let run = 0; const bars = [];
+  steps.forEach(st => {
+    if (st.total){ bars.push({ ...st, y0:0, y1:st.v }); run = st.v; }
+    else { bars.push({ ...st, y0:run, y1:run + st.v }); run += st.v; }
   });
-  html+=`<div class="addbar"><button class="btn dark" onclick="toggleAdd()">+ Добавить сотрудника или расход</button>
-    <div class="addform" id="addform"><input type="text" id="addN" placeholder="Кто или что"><input type="text" class="n" id="addV" placeholder="₽ / мес" onkeydown="if(event.key==='Enter')addTeam()"><button class="btn dark" onclick="addTeam()">В сценарий</button></div></div>
-  <div class="tot"><span>Фикс в месяц</span><b>${Nf(r.fixed)} ₽</b></div>`;
-  document.getElementById('teamCard').innerHTML=html;
+  const vals = bars.flatMap(b => [b.y0, b.y1]).concat(0);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const pad = (hi - lo) * 0.12 || 5e5; lo -= pad; hi += pad;
+  const W = 760, H = 300, pl = 46, pr = 10, pt = 22, pb = 54;
+  const n = bars.length, slot = (W - pl - pr) / n, bw = Math.min(70, slot * 0.58);
+  const Y = v => pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb);
+  const step = niceStep((hi - lo) / 5);
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Каскад месяца: от вклада подписки до остатка">`;
+  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step){
+    s += `<line class="wf-grid" x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}"/><text class="wf-t" x="${pl - 6}" y="${Y(v) + 3}" text-anchor="end">${Mf(v).replace(/,00$/, '')}</text>`;
+  }
+  s += `<line class="wf-zero" x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  s += `<text class="wf-t" x="${pl - 6}" y="${pt - 8}" text-anchor="end">МЛН ₽</text>`;
+  bars.forEach((b, i) => {
+    const cx = pl + slot * i + slot / 2, x = cx - bw / 2;
+    const top = Y(Math.max(b.y0, b.y1)), h = Math.max(1.5, Math.abs(Y(b.y0) - Y(b.y1)));
+    const cls = b.kind === 'pos' ? 'wf-pos' : b.kind === 'neg' ? 'wf-neg' : b.kind === 'fin' ? 'wf-fin' : 'wf-tot';
+    s += `<rect class="${cls}" x="${x}" y="${top}" width="${bw}" height="${h}"/>`;
+    if (i < n - 1){ const nx = pl + slot * (i + 1) + slot / 2 - bw / 2; s += `<line class="wf-link" x1="${x + bw}" x2="${nx}" y1="${Y(b.y1)}" y2="${Y(b.y1)}"/>`; }
+    const lblY = b.y1 >= b.y0 ? top - 6 : top + h + 13;
+    const shown = b.total ? b.v : (b.y1 - b.y0);
+    s += `<text class="wf-v" x="${cx}" y="${lblY}" text-anchor="middle">${(shown > 0 && !b.total ? '+' : '') + Mf(shown)}</text>`;
+    s += `<text class="wf-cap" x="${cx}" y="${H - pb + 18}" text-anchor="middle">${esc(b.lab)}</text>`;
+    s += `<text class="wf-t" x="${cx}" y="${H - pb + 32}" text-anchor="middle">${esc(b.sub)}</text>`;
+  });
+  document.getElementById('wf').innerHTML = s + '</svg>';
+  document.getElementById('cascadeNote').textContent = 'млн ₽ в месяц · без НДС · до налога';
+}
+function niceStep(raw){ const p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2.5 : m < 7.5 ? 5 : 10) * p; }
+
+/* ═══════════ ручки ═══════════ */
+const tg = (on, act, cu, label) => `<button class="tg ${on ? 'on' : ''} ${cu ? 'cu' : ''}" type="button" aria-pressed="${on}" aria-label="${esc(label)}" data-act="${act}"></button>`;
+function addForm(key, fields){
+  return `<div class="add"><button class="btn sm" type="button" data-addtoggle="${key}">+ Добавить</button>
+    <div class="addform" id="af-${key}" hidden>
+      <input type="text" id="an-${key}" placeholder="${fields.name}">
+      ${fields.price ? `<input type="text" class="n" id="ap-${key}" placeholder="тариф / мес" value="${Nf(S.price)}">` : ''}
+      <input type="text" class="n" id="av-${key}" placeholder="${fields.val}">
+      <button class="btn sm" type="button" data-add="${key}">В сценарий</button>
+    </div></div>`;
+}
+function renderTeam(r){
+  const groups = [...new Set(GROUPS_TEAM.concat(S.team.map(t => t.g)))];
+  let h = `<h2>Ядро: команда и фикс</h2><div class="lead">Не зависит от числа клиентов. Круг закрашен — платим. Сумма в поле, подтверждение — Enter.</div>`;
+  groups.forEach(g => {
+    const items = S.team.filter(t => t.g === g);
+    h += `<div class="grp"><span class="kick"><span>${esc(g)}</span><span class="num">${Nf(r.groups[g] || 0)} ₽</span></span>`;
+    items.forEach(t => {
+      h += `<div class="row ${t.on ? '' : 'off'}">${tg(t.on, 'team:' + t.id, false, t.n)}
+        <div style="min-width:0"><div class="nm">${esc(t.n)}${t.custom ? '<span class="flag">добавлено</span>' : ''}</div><div class="sub">${esc(t.s)}${t.custom ? ` · <button class="rm" type="button" data-rm="team:${t.id}">убрать</button>` : ''}</div></div>
+        <div><input type="text" id="tv-${t.id}" value="${Nf(t.v)}" data-set="team:${t.id}:v" aria-label="Сумма в месяц"><div class="unit">₽ / мес</div></div></div>`;
+    });
+    h += addForm('team:' + g, { name:'Кто или что', val:'₽ / мес' }) + `</div>`;
+  });
+  h += `<div class="tot"><span>Фикс ядра в месяц</span><b>${Nf(r.fixed)} ₽</b></div>`;
+  document.getElementById('teamCard').innerHTML = h;
+}
+function clientRows(list){
+  return list.map(c => `<div class="row cl ${c.on ? '' : 'off'}">${tg(c.on, 'client:' + c.id, c.g === 'pipe', c.n)}
+    <div style="min-width:0"><div class="nm">${esc(c.n)}${c.custom ? '<span class="flag">добавлено</span>' : ''}</div><div class="sub">${esc(c.s)}${c.custom ? ` · <button class="rm" type="button" data-rm="client:${c.id}">убрать</button>` : ''}</div></div>
+    <div><input type="text" id="cp-${c.id}" value="${Nf(c.price)}" data-set="client:${c.id}:price" aria-label="Тариф в месяц"><div class="unit">тариф / мес</div></div>
+    <div><input type="text" id="ct-${c.id}" value="${Nf(c.trk)}" data-set="client:${c.id}:trk" aria-label="Ставка трекера"><div class="unit">трекер</div></div></div>`).join('');
 }
 function renderClients(r){
-  let html=`<h2>Платящие клиенты акселерации</h2><div class="lead">Портфель на 14.09. Изосина и Цыганов — на опционе, не платят; Голубенко вышел.</div>
-  <div class="grp"><span class="kick"><span>Портфель</span><span>${S.clients.filter(c=>c.on).length} платящих</span></span>`;
-  S.clients.forEach((c,i)=>{
-    html+=`<div class="row ${c.on?'':'off'}">${tg(c.on,`toggleClient(${i})`)}
-      <div><div class="nm">${esc(c.n)}</div><div class="sub">${esc(c.s)}${(c.tracker===0 && !S.team.some(t=>t.on && /трекерство/.test(t.n)))?' · <b style="color:var(--copper)">трекерство Дубровина выключено — впиши ставку</b>':''}</div></div>
-      <div><input type="text" value="${Nf(c.tracker)}" onchange="setTracker(${i},this.value)" aria-label="ставка трекера"><div class="unit">трекер ₽</div></div></div>`;
+  const pay = S.clients.filter(c => c.g === 'pay'), pipe = S.clients.filter(c => c.g === 'pipe');
+  let h = `<h2>Подписка: платящие клиенты</h2><div class="lead">Тариф с НДС в месяц. Вклад клиента = тариф без НДС − трекер − ЦК ${Nf(S.ck)}.</div>
+  <div class="grp"><span class="kick"><span>Платят сейчас</span><span>${pay.filter(c => c.on).length} в расчёте</span></span>${clientRows(pay)}${addForm('client:pay', { name:'Клиент — компания', val:'трекер ₽', price:true })}</div>
+  <div class="grp"><span class="kick"><span>Заходят после ММ · на подписании</span><span>${pipe.filter(c => c.on).length} из ${pipe.length} включено</span></span>${clientRows(pipe)}${addForm('client:pipe', { name:'Клиент — компания', val:'трекер ₽', price:true })}</div>
+  <div class="grp"><span class="kick"><span>Гипотеза сверх названных</span><span>${Nf(r.perNew)} ₽ вклада каждый</span></span>
+    <div class="counter"><div><div class="nm" style="font-size:13px;font-weight:500">Новых клиентов по ${Nf(S.price)} в месяц</div><div class="sub note">трекер ${Nf(S.trk)} и ЦК ${Nf(S.ck)} по ставкам ниже</div></div>
+      <div class="pm"><button type="button" data-step="-1" aria-label="Минус клиент">−</button><b>${S.newN}</b><button type="button" data-step="1" aria-label="Плюс клиент">+</button></div></div></div>
+  <div class="grp"><span class="kick"><span>Ставки по умолчанию</span><span></span></span>
+    <div class="row"><span class="dot"></span><div><div class="nm">Тариф нового клиента</div><div class="sub">с НДС в месяц</div></div><div><input type="text" id="r-price" value="${Nf(S.price)}" data-rate="price" aria-label="Тариф нового клиента"><div class="unit">₽ / мес</div></div></div>
+    <div class="row"><span class="dot"></span><div><div class="nm">Трекер</div><div class="sub">4–5 встреч; меньше четырёх — 25 000 за встречу</div></div><div><input type="text" id="r-trk" value="${Nf(S.trk)}" data-rate="trk" aria-label="Ставка трекера"><div class="unit">₽ / клиент</div></div></div>
+    <div class="row"><span class="dot"></span><div><div class="nm">Боронина — Центр компетенций</div><div class="sub">за каждого платящего клиента, фикса нет</div></div><div><input type="text" id="r-ck" value="${Nf(S.ck)}" data-rate="ck" aria-label="Ставка ЦК"><div class="unit">₽ / клиент</div></div></div>
+  </div>
+  <div class="tot"><span>Вклад подписки · ${r.nAll} платящих</span><b>${Nf(r.contrib)} ₽</b></div>`;
+  document.getElementById('clientCard').innerHTML = h;
+}
+function renderPort(r){
+  let h = `<h2>Портфель: трекинг без подписки</h2><div class="lead">Компании на опционе и на сделке за акселерацию не платят, но мы их ведём. Это инвестиция в долю, а не расход акселерации.</div><div class="grp">`;
+  S.port.forEach(p => {
+    h += `<div class="row ${p.on ? '' : 'off'}">${tg(p.on, 'port:' + p.id, true, p.n)}
+      <div style="min-width:0"><div class="nm">${esc(p.n)}${p.custom ? '<span class="flag">добавлено</span>' : ''}</div><div class="sub">${esc(p.s)}${p.custom ? ` · <button class="rm" type="button" data-rm="port:${p.id}">убрать</button>` : ''}</div></div>
+      <div><input type="text" id="pv-${p.id}" value="${Nf(p.v)}" data-set="port:${p.id}:v" aria-label="Сумма в месяц"><div class="unit">₽ / мес</div></div></div>`;
   });
-  html+=`</div>
-  <div class="grp"><span class="kick"><span>Новые клиенты · 6 млн в год</span><span>${Nf(r.perNew)} ₽ вклада каждый</span></span>
-    <div class="counter"><div><div class="nm">Новых сверх портфеля</div><div class="sub">500 000 с НДС в месяц, трекер и ЦК по ставкам ниже</div></div>
-      <div class="pm"><button onclick="stepNew(-1)" aria-label="минус">−</button><b>${S.newClients}</b><button onclick="stepNew(1)" aria-label="плюс">+</button></div></div>
+  h += addForm('port', { name:'Компания или кто ведёт', val:'₽ / мес' }) + `</div>
+  <div class="tot"><span>Портфель в месяц · ${Nf(r.port * 12)} в год</span><b>${Nf(r.port)} ₽</b></div>`;
+  document.getElementById('portCard').innerHTML = h;
+}
+function renderMM(r){
+  const m = S.mm;
+  document.getElementById('mmCard').innerHTML = `<h2>Мастермайнды</h2><div class="lead">Два события в год. В месяц — их вклад, делённый на 12. Включается переключателем «с ММ» в панели.</div>
+  <div class="grp">
+    <div class="row"><span class="dot"></span><div><div class="nm">Август — факт</div><div class="sub">выручка без НДС минус прямые расходы</div></div><div><input type="text" id="m-aug" value="${Nf(m.aug)}" data-mm-set="aug" aria-label="Вклад августа"><div class="unit">₽ за событие</div></div></div>
+    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — цель с НДС</div><div class="sub">Анталья, 07–13.12</div></div><div><input type="text" id="m-dt" value="${Nf(m.decTarget)}" data-mm-set="decTarget" aria-label="Цель декабря"><div class="unit">₽</div></div></div>
+    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — сбор цели</div><div class="sub">на 01.10 с учётом счетов — около 18%</div></div><div><input type="text" id="m-dp" value="${Nf(m.decPct)}" data-mm-set="decPct" aria-label="Процент сбора"><div class="unit">% цели</div></div></div>
+    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — смета</div><div class="sub">расходы события, без комиссий</div></div><div><input type="text" id="m-dc" value="${Nf(m.decCost)}" data-mm-set="decCost" aria-label="Смета декабря"><div class="unit">₽</div></div></div>
+    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — комиссии</div><div class="sub">доля от выручки с НДС, с запасом</div></div><div><input type="text" id="m-dm" value="${Nf(m.decComm * 100)}" data-mm-set="decComm" aria-label="Комиссии декабря"><div class="unit">%</div></div></div>
   </div>
-  <div class="grp"><span class="kick"><span>Переменные ставки на клиента</span><span></span></span>
-    <div class="row"><span class="mk full"></span><div><div class="nm">Трекер</div><div class="sub">за клиента в месяц, 4–5 встреч; меньше четырёх — 25 000 за встречу</div></div>
-      <div><input type="text" value="${Nf(S.trackerRate)}" onchange="setRate('trackerRate',this.value)" aria-label="ставка трекера"><div class="unit">₽ / клиент</div></div></div>
-    <div class="row"><span class="mk full"></span><div><div class="nm">Боронина — Центр компетенций</div><div class="sub">это и есть её оплата, фикса нет</div></div>
-      <div><input type="text" value="${Nf(S.ckRate)}" onchange="setRate('ckRate',this.value)" aria-label="ставка ЦК"><div class="unit">₽ / клиент</div></div></div>
-    <div class="row"><span class="mk cu"></span><div><div class="nm">Мастермайнды — вклад в год</div><div class="sub">2 × 10 538 846 по факту августа; включается переключателем в панели</div></div>
-      <div><input type="text" value="${Nf(S.mmYear)}" onchange="setRate('mmYear',this.value)" aria-label="вклад ММ в год"><div class="unit">₽ / год</div></div></div>
-  </div>
-  <div class="tot"><span>Выручка без НДС · ${r.nPaying} платящих</span><b>${Nf(r.revNet)} ₽</b></div>`;
-  document.getElementById('clientCard').innerHTML=html;
+  <div class="tot"><span>Декабрь ${Nf(r.decContrib)} · за год ${Nf(r.mmYear)}</span><b>${Nf(r.mmYear / 12)} ₽ / мес</b></div>`;
 }
 
-/* ── ведомость и график ── */
+/* ═══════════ ведомость и кривая ═══════════ */
 function renderLedger(r){
-  document.getElementById('ledger').innerHTML=`<table class="ledger">
-    <tr><td>Выручка без НДС<span class="sub">${r.nPaying} платящих · ${Nf(r.revGross)} с НДС</span></td><td class="a">${Nf(r.revNet)}</td></tr>
-    <tr><td>Трекеры</td><td class="a neg">−${Nf(r.trackers)}</td></tr>
-    <tr><td>Центр компетенций · ${Nf(S.ckRate)} × ${r.nPaying}</td><td class="a neg">−${Nf(r.ck)}</td></tr>
-    <tr class="sum"><td>Вклад акселерации</td><td class="a">${Nf(r.contribution)}</td></tr>
-    <tr><td>Фикс: команда, IT, административные, расходы без выручки</td><td class="a neg">−${Nf(r.fixed)}</td></tr>
-    <tr class="sum"><td>Результат акселерации</td><td class="a ${r.result<0?'neg':''}">${Nf(r.result)}</td></tr>
-    <tr><td>Мастермайнды, усреднённо в месяц${S.mmOn?'':' — выключены'}</td><td class="a">${S.mmOn?'+'+Nf(r.mm):'0'}</td></tr>
-    <tr class="sum"><td>Остаётся в месяц</td><td class="a ${r.total<0?'neg':''}">${Nf(r.total)}</td></tr>
-    <tr><td>После налога на прибыль 25 %</td><td class="a">${Nf(r.afterTax)}</td></tr>
-    <tr><td>Вклад одного нового клиента<span class="sub">без НДС минус трекер ${Nf(S.trackerRate)} и ЦК ${Nf(S.ckRate)}</span></td><td class="a">${Nf(r.perNew)}</td></tr>
+  const L = (a, b, sub, cls = '') => `<tr class="${cls}"><td>${a}${sub ? `<span class="sub">${sub}</span>` : ''}</td><td class="a">${b}</td></tr>`;
+  document.getElementById('ledger').innerHTML = `<table class="ledger">
+    ${L('Выручка акселерации без НДС', Nf(r.revNet), `${r.nAll} платящих · ${Nf(r.revGross)} с НДС`)}
+    ${L('Трекеры', '−' + Nf(r.trackers))}
+    ${L('Центр компетенций', '−' + Nf(r.ck), `${Nf(S.ck)} × ${r.nAll}`)}
+    ${L('Вклад подписки', Nf(r.contrib), '', 'sum')}
+    ${L('Ядро: команда, сервисы, административные', '−' + Nf(r.fixed))}
+    ${L('Результат акселерации', Nf(r.accel), '', 'sum')}
+    ${L('Портфель: трекинг компаний без подписки', '−' + Nf(r.port))}
+    ${L('Операционный результат', Nf(r.oper), 'без мастермайндов', 'sum')}
+    ${L('Мастермайнды, в среднем в месяц', S.mm.on ? '+' + Nf(r.mm) : '0', S.mm.on ? `август ${Nf(S.mm.aug)} + декабрь ${Nf(r.decContrib)}, ÷ 12` : 'выключены')}
+    ${L('Остаётся в месяц', Nf(r.total), 'до налога на прибыль', 'sum')}
+    ${L('После налога на прибыль 25%', Nf(r.afterTax))}
+    ${L('Вклад одного нового клиента', Nf(r.perNew), `${Nf(S.price)} без НДС минус трекер ${Nf(S.trk)} и ЦК ${Nf(S.ck)}`)}
   </table>`;
 }
-function chart(r){
-  const W=640,H=250,pl=58,pr=14,pt=16,pb=30;
-  const ys=r.curve.map(p=>p.y); const yMin=Math.min(...ys,r.total,0), yMax=Math.max(...ys,r.total,0);
-  const pad=(yMax-yMin)*0.08||1e5, y0=yMin-pad, y1=yMax+pad;
-  const X=n=>pl+(n/16)*(W-pl-pr), Y=v=>pt+(1-(v-y0)/(y1-y0))*(H-pt-pb);
-  let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="результат в месяц от числа клиентов">`;
-  for(let i=0;i<=5;i++){ const v=y0+(y1-y0)*i/5; s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#EDE8DF"/><text x="${pl-6}" y="${Y(v)+3}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#5E4A38">${(v/1e6).toFixed(1).replace('.',',')}</text>`; }
-  s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#B9794B" stroke-dasharray="3 3"/>`;
-  for(let n=0;n<=16;n+=2) s+=`<text x="${X(n)}" y="${H-10}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#5E4A38">${n}</text>`;
-  s+=`<text x="${W-pr}" y="${H-1}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#5E4A38" letter-spacing="1">КЛИЕНТОВ НОВОГО ТАРИФА</text><text x="${pl-6}" y="${pt-5}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#5E4A38" letter-spacing="1">МЛН ₽ / МЕС</text>`;
-  s+=`<polyline fill="none" stroke="#1C4A43" stroke-width="1.75" points="${r.curve.map(p=>X(p.n)+','+Y(p.y)).join(' ')}"/>`;
-  if(r.breakeven!=null&&r.breakeven<=16) s+=`<circle cx="${X(r.breakeven)}" cy="${Y(0)}" r="4" fill="#FBFAF7" stroke="#1C4A43" stroke-width="1.5"/>`;
-  const nx=Math.min(16,r.nPaying); s+=`<circle cx="${X(nx)}" cy="${Y(r.total)}" r="5" fill="#B9794B"/><text x="${X(nx)+9}" y="${Y(r.total)+3}" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#B9794B" letter-spacing="1">СЕЙЧАС</text>`;
-  return s+`</svg><div class="note">Кривая — для клиентов нового тарифа с трекером ${Nf(S.trackerRate)} при текущем фиксе. Кольцо — безубыточность, пунктир — ноль. Фактический портфель смешанный, поэтому точка «сейчас» может лежать не на кривой.</div>`;
+function renderCurve(r){
+  const N = 16, mm = r.mm;
+  const core = [], full = [];
+  for (let n = 0; n <= N; n++){ core.push(n * r.perNew - r.fixed + mm); full.push(n * r.perNew - r.fixed - r.port + mm); }
+  const ys = core.concat(full, [0, r.accel + mm, r.total]);
+  let lo = Math.min(...ys), hi = Math.max(...ys); const pad = (hi - lo) * 0.08 || 1e5; lo -= pad; hi += pad;
+  const W = 680, H = 270, pl = 46, pr = 16, pt = 18, pb = 34;
+  const X = n => pl + n / N * (W - pl - pr), Y = v => pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb);
+  const step = niceStep((hi - lo) / 5);
+  let s = `<div class="svgbox"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Результат в месяц от числа платящих клиентов">`;
+  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) s += `<line class="wf-grid" x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}"/><text class="wf-t" x="${pl - 6}" y="${Y(v) + 3}" text-anchor="end">${Mf(v).replace(/,00$/, '')}</text>`;
+  s += `<line class="wf-zero" x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  for (let n = 0; n <= N; n += 2) s += `<text class="wf-t" x="${X(n)}" y="${H - 14}" text-anchor="middle">${n}</text>`;
+  s += `<text class="wf-t" x="${W - pr}" y="${H - 1}" text-anchor="end">ПЛАТЯЩИХ КЛИЕНТОВ ПО ${Nf(S.price)}</text>`;
+  s += `<polyline fill="none" style="stroke:var(--petrol)" stroke-width="2" points="${core.map((y, n) => X(n) + ',' + Y(y)).join(' ')}"/>`;
+  s += `<polyline fill="none" style="stroke:var(--petrol)" stroke-width="1.5" stroke-dasharray="5 4" points="${full.map((y, n) => X(n) + ',' + Y(y)).join(' ')}"/>`;
+  [[r.beCore, 'ЯДРО'], [r.bePort, 'С ПОРТФЕЛЕМ']].forEach(([b, t]) => { if (b != null && b <= N){ s += `<circle cx="${X(b)}" cy="${Y(0)}" r="4.5" style="fill:var(--card);stroke:var(--petrol)" stroke-width="1.5"/><text class="wf-t" x="${X(b)}" y="${Y(0) + 16}" text-anchor="middle">${t} · ${b}</text>`; } });
+  const nx = Math.min(N, r.nAll);
+  s += `<circle cx="${X(nx)}" cy="${Y(r.total)}" r="5.5" style="fill:var(--copper)"/><text class="wf-t" x="${X(nx) + 9}" y="${Y(r.total) - 6}" style="fill:var(--copper)">СЕЙЧАС · ${r.nAll}</text>`;
+  s += `</svg></div><p class="note" style="margin-top:6px">Сплошная линия — подписка против ядра, пунктир — после портфеля${S.mm.on ? '; обе с учётом ММ' : ''}. Кольца — безубыточность. Медная точка — текущий сценарий; портфель смешанный (старый тариф, разные ставки трекеров), поэтому точка может лежать не на линии.</p>`;
+  document.getElementById('curve').innerHTML = s;
 }
 
-function render(){ const r=calc(); renderPanel(r); renderTeam(r); renderClients(r); renderLedger(r); document.getElementById('chartBox').innerHTML=`<div class="chart">${chart(r)}</div>`; pushState(); }
+/* ═══════════ рендер и действия ═══════════ */
+function render(){
+  const r = calcOf(S);
+  renderPanel(r); renderWaterfall(r); renderTeam(r); renderClients(r); renderPort(r); renderMM(r); renderLedger(r); renderCurve(r); renderList();
+  document.getElementById('curName').textContent = S.name || 'Без названия';
+  document.getElementById('curState').textContent = dirty ? '· изменён, не сохранён' : '';
+}
+function touch(){ dirty = true; render(); }
+function find(kind, id){ return (kind === 'team' ? S.team : kind === 'client' ? S.clients : S.port).find(x => x.id === id); }
 
-/* ── действия ── */
-function toggleTeam(i){ S.team[i].on=!S.team[i].on; render(); }
-function setTeam(i,v){ S.team[i].v=numIn(v); render(); }
-function removeTeam(i){ S.team.splice(i,1); render(); }
-function toggleAdd(){ const f=document.getElementById('addform'); f.classList.toggle('open'); if(f.classList.contains('open')) document.getElementById('addN').focus(); }
-function addTeam(){ const n=document.getElementById('addN').value.trim(), v=numIn(document.getElementById('addV').value); if(!n||!v) return; S.team.push({g:'Добавлено в сценарии',n,s:'нет в базе 14.09',v,on:true,custom:true}); document.getElementById('addN').value=''; document.getElementById('addV').value=''; render(); }
-function toggleClient(i){ S.clients[i].on=!S.clients[i].on; render(); }
-function setTracker(i,v){ S.clients[i].tracker=numIn(v); render(); }
-function stepNew(d){ S.newClients=Math.max(0,Math.min(20,S.newClients+d)); render(); }
-function setRate(k,v){ S[k]=numIn(v); render(); }
-function setMM(on){ S.mmOn=on; render(); }
+document.addEventListener('click', e => {
+  const el = e.target.closest('button'); if (!el) return;
+  const d = el.dataset;
+  if (d.act){ const [k, id] = d.act.split(':'); const it = find(k, id); if (it){ it.on = !it.on; touch(); } return; }
+  if (d.rm){ const [k, id] = d.rm.split(':'); const arr = k === 'team' ? S.team : k === 'client' ? S.clients : S.port; const i = arr.findIndex(x => x.id === id); if (i >= 0){ arr.splice(i, 1); touch(); } return; }
+  if (d.mm != null){ S.mm.on = d.mm === '1'; touch(); return; }
+  if (d.step){ S.newN = Math.max(0, Math.min(30, S.newN + Number(d.step))); touch(); return; }
+  if (d.addtoggle){ const f = document.getElementById('af-' + d.addtoggle); f.hidden = !f.hidden; if (!f.hidden) document.getElementById('an-' + d.addtoggle).focus(); return; }
+  if (d.add){ doAdd(d.add); return; }
+  if (d.open != null){ openScenario(Number(d.open)); return; }
+  if (d.del != null){ delScenario(Number(d.del)); return; }
+});
+function doAdd(key){
+  const name = document.getElementById('an-' + key).value.trim();
+  const val = numIn(document.getElementById('av-' + key).value);
+  if (!name){ document.getElementById('an-' + key).focus(); return; }
+  const [kind, grp] = key.split(':');
+  if (kind === 'team') S.team.push({ id: uid('t'), g: grp, n: name, s: 'добавлено в сценарии', v: val, on: true, custom: true });
+  if (kind === 'port') S.port.push({ id: uid('f'), n: name, s: 'добавлено в сценарии', v: val, on: true, custom: true });
+  if (kind === 'client'){ const price = numIn(document.getElementById('ap-' + key).value) || S.price; S.clients.push({ id: uid('c'), g: grp, n: name, s: 'добавлено в сценарии', price, trk: val || S.trk, on: true, custom: true }); }
+  touch();
+}
+document.addEventListener('change', e => {
+  const el = e.target; const d = el.dataset;
+  if (d.set){ const [k, id, f] = d.set.split(':'); const it = find(k, id); if (it){ it[f] = numIn(el.value); touch(); } }
+  if (d.rate){ S[d.rate] = numIn(el.value); touch(); }
+  if (d.mmSet){ const v = numIn(el.value); S.mm[d.mmSet] = d.mmSet === 'decComm' ? v / 100 : v; touch(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const el = e.target;
+  if (el.matches('.addform input')){ const key = el.id.replace(/^a[npv]-/, ''); doAdd(key); }
+  else if (el.matches('input[data-set],input[data-rate],input[data-mm-set]')) el.blur();
+  else if (el.id === 'scenName') saveScenario();
+});
+document.getElementById('btnSave').addEventListener('click', saveScenario);
+document.getElementById('btnReset').addEventListener('click', () => { S = clone(BASE); dirty = false; render(); toast('База 03.10'); });
+document.getElementById('btnDrawer').addEventListener('click', e => { const dr = document.getElementById('drawer'); dr.hidden = !dr.hidden; e.currentTarget.setAttribute('aria-expanded', String(!dr.hidden)); });
+document.getElementById('btnCopyCode').addEventListener('click', () => copyText(encodeState(S), 'Код скопирован'));
+document.getElementById('btnCopyLink').addEventListener('click', () => copyText(location.href.split('#')[0] + '#s=' + encodeState(S), 'Ссылка скопирована'));
+document.getElementById('btnImport').addEventListener('click', () => {
+  const st = decodeState(document.getElementById('importCode').value);
+  const msg = document.getElementById('importMsg');
+  if (!st){ msg.textContent = 'Код не читается — проверь, что он скопирован целиком.'; return; }
+  S = st; dirty = true; msg.textContent = 'Открыт: ' + (S.name || 'сценарий') + '. Сохрани, чтобы он остался на этом устройстве.'; render();
+});
 
-(function(){ const h=location.hash.slice(1); if(h){ const st=decodeState(h); if(st) S=st; } document.getElementById('hint').addEventListener('toggle', onHint); render(); })();
+(function init(){
+  const h = location.hash;
+  if (h.startsWith('#s=')){ const st = decodeState(decodeURIComponent(h.slice(3))); if (st){ S = st; dirty = true; } }
+  render();
+})();
 </script>
-</body>
-</html>
+</body></html>
