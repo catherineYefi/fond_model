@@ -8,7 +8,7 @@
   --bg:#F5F2EC; --card:#FBFAF7; --input:#FFFFFF; --line:#D8D4C9; --sand:#F0E6DB;
   --ink:#262624; --ink2:#5E4A38; --muted:#6E6A61;
   --petrol:#1C4A43; --copper:#B9794B;
-  --hdr-bg:#12332E; --hdr-fg:#F5F2EC; --grid:#E6E1D7;
+  --hdr-bg:#12332E; --hdr-fg:#F5F2EC; --grid:#E6E1D7; --petrol2:#5F8C83;
   --sans:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
 }
@@ -17,14 +17,14 @@
     --bg:#0F2622; --card:#15302B; --input:#10292484; --line:#2D4C45; --sand:#21403A;
     --ink:#F5F2EC; --ink2:#D8C8B4; --muted:#A8A296;
     --petrol:#8CC0B4; --copper:#D39C70;
-    --hdr-bg:#0A1C19; --hdr-fg:#F5F2EC; --grid:#22423C; color-scheme:dark;
+    --hdr-bg:#0A1C19; --hdr-fg:#F5F2EC; --grid:#22423C; --petrol2:#4E8277; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0F2622; --card:#15302B; --input:#10292484; --line:#2D4C45; --sand:#21403A;
   --ink:#F5F2EC; --ink2:#D8C8B4; --muted:#A8A296;
   --petrol:#8CC0B4; --copper:#D39C70;
-  --hdr-bg:#0A1C19; --hdr-fg:#F5F2EC; --grid:#22423C; color-scheme:dark;
+  --hdr-bg:#0A1C19; --hdr-fg:#F5F2EC; --grid:#22423C; --petrol2:#4E8277; color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -163,6 +163,70 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .pm b{font-family:var(--mono);font-size:15px;font-weight:500;min-width:36px;text-align:center;color:var(--copper)}
 .flag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper);border:.75px solid var(--copper);padding:1px 5px;margin-left:6px;white-space:nowrap;vertical-align:1px}
 
+/* главное: ответ одной фразой + лестница клиентов */
+.hero{background:var(--card);border:.75px solid var(--line);padding:18px 20px 14px}
+.hero .lead-k{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.hero h2{font-size:23px;font-weight:700;line-height:1.25;margin-top:8px;max-width:900px;letter-spacing:-.01em}
+.hero h2 em{font-style:normal;color:var(--copper)}
+.hero .facts{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:10px;font-size:13px;color:var(--ink2);max-width:980px}
+.hero .facts b{font-family:var(--mono);font-weight:500;color:var(--ink);white-space:nowrap}
+.ladder{overflow-x:auto;margin-top:12px}
+.ladder svg{display:block;width:100%;min-width:600px;height:auto}
+.ld-paid{fill:var(--petrol)}
+.ld-scen{fill:var(--copper)}
+.ld-pipe{fill:var(--card);stroke:var(--copper);stroke-width:1.5;stroke-dasharray:3 2.5}
+.ld-empty{fill:var(--card);stroke:var(--line);stroke-width:1.25}
+.ld-n{font-family:var(--mono);font-size:9.5px;fill:var(--muted)}
+.ld-th{stroke:var(--ink);stroke-width:1.25}
+.ld-th2{stroke:var(--ink);stroke-width:1.25;stroke-dasharray:4 3}
+.ld-tl{font-family:var(--sans);font-size:11.5px;fill:var(--ink);font-weight:500}
+.ld-ts{font-family:var(--mono);font-size:9.5px;fill:var(--ink2)}
+.keys{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:11.5px;color:var(--ink2);margin-top:4px}
+.keys span{white-space:nowrap}
+.kd{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:6px}
+.kd.paid{background:var(--petrol)}
+.kd.sc{background:var(--copper)}
+.kd.pipe{border:1.5px dashed var(--copper)}
+.kd.empty{border:1.25px solid var(--line)}
+.kl{display:inline-block;width:14px;height:0;border-top:1.25px solid var(--ink);vertical-align:3px;margin-right:6px}
+.kl.d{border-top-style:dashed}
+
+/* деньги за месяц */
+.money{background:var(--card);border:.75px solid var(--line);padding:16px 20px 14px}
+.money-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.money-head h2{font-size:15px;font-weight:700}
+.mrow{display:grid;grid-template-columns:84px minmax(0,1fr) 120px;gap:12px;align-items:center;margin-top:12px}
+.mrow .lab{font-size:13px;font-weight:700}
+.mrow .lab small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);font-weight:400}
+.mrow .sum{font-family:var(--mono);font-size:14px;text-align:right;white-space:nowrap}
+.bar{display:flex;height:46px;min-width:0}
+.seg{position:relative;display:flex;flex-direction:column;justify-content:center;padding:0 8px;overflow:hidden;white-space:nowrap;min-width:3px;cursor:help;border-right:1.5px solid var(--card)}
+.seg:last-child{border-right:0}
+.seg .t{font-size:11px;line-height:1.1;overflow:hidden;text-overflow:ellipsis}
+.seg .v{font-family:var(--mono);font-size:11px;line-height:1.3;overflow:hidden;text-overflow:ellipsis}
+.s-sub{background:var(--petrol);color:var(--bg)}
+.s-mm{background:var(--petrol2);color:var(--bg)}
+.s-var{background:var(--sand);color:var(--ink)}
+.s-core{background:var(--ink);color:var(--bg)}
+.s-port{background:var(--ink2);color:var(--bg)}
+.s-plus{background:var(--copper);color:var(--bg)}
+.s-minus{background:transparent;border:1.5px dashed var(--copper)!important;color:var(--copper)}
+.seg:focus-visible{outline:2px solid var(--copper);outline-offset:1px}
+.verdict{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:14px;padding-top:10px;border-top:1.5px solid var(--petrol)}
+.verdict .vt{font-size:13px}
+.verdict .vv{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--copper);white-space:nowrap}
+.mlist{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin-top:12px;font-size:12px}
+.mlist div{display:flex;justify-content:space-between;gap:10px;border-bottom:.75px solid var(--line);padding:4px 0}
+.mlist b{font-family:var(--mono);font-weight:500;white-space:nowrap}
+@media(max-width:640px){.mrow{grid-template-columns:62px minmax(0,1fr)}.mrow .sum{grid-column:2;text-align:left;font-size:12.5px}.mlist{grid-template-columns:1fr}.hero h2{font-size:19px}}
+
+/* подсказки */
+.qi{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid currentColor;font-family:var(--mono);font-size:9px;letter-spacing:0;text-transform:none;cursor:help;margin-left:6px;vertical-align:1px;opacity:.75}
+[data-tip]{cursor:help}
+#tip{position:fixed;z-index:20;max-width:320px;background:var(--hdr-bg);color:var(--hdr-fg);font-size:12px;line-height:1.45;padding:10px 12px;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+#tip b{display:block;font-size:12.5px;margin-bottom:3px;color:var(--hdr-fg)}
+#tip .tn{font-family:var(--mono);color:#E0B48E}
+
 /* спойлеры */
 details{margin-top:16px;background:var(--card);border:.75px solid var(--line)}
 summary{list-style:none;cursor:pointer;padding:12px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
@@ -222,21 +286,11 @@ details .body{padding:0 18px 16px;overflow-x:auto}
     </div>
   </div>
 
+  <div class="section hero" id="hero"></div>
+
   <div class="panel" id="panel"></div>
 
-  <div class="section cascade">
-    <div class="cascade-head">
-      <h2>Из чего складывается месяц</h2>
-      <span class="kick" id="cascadeNote"></span>
-    </div>
-    <div class="svgbox" id="wf"></div>
-    <div class="legend">
-      <span><span class="lg pos"></span>приносит деньги</span>
-      <span><span class="lg neg"></span>расход</span>
-      <span><span class="lg tot"></span>промежуточный итог</span>
-      <span><span class="lg fin"></span>остаётся в месяц</span>
-    </div>
-  </div>
+  <div class="section money" id="money"></div>
 
   <div class="cols">
     <div class="stack">
@@ -253,20 +307,22 @@ details .body{padding:0 18px 16px;overflow-x:auto}
   <details id="dCurve"><summary><span class="chev"></span>Результат в месяц от числа платящих клиентов</summary><div class="body" id="curve"></div></details>
   <details id="dAssume"><summary><span class="chev"></span>Допущения базы 03.10 и что не учтено</summary><div class="body">
     <ul class="assume">
-      <li><b>Подписка.</b> С ноября платят шестеро: Бражников (старый тариф 5 млн), Лебедев, Новик-Качан, Козырев, Косолапов, Спирина (по 6 млн). Бобрук выходит в октябре — выключен. Иванова, Изосина и Цыганов за акселерацию не платят. Квартальные платежи пересчитаны в месячный эквивалент.</li>
+      <li><b>Подписка.</b> С ноября платят семеро: Бражников (старый тариф 5 млн), Лебедев, Новик-Качан, Козырев, Косолапов, Спирина (по 6 млн) и Островский — WELCS (500 000 в месяц на иностранное юрлицо, с августа; оплат ещё не было, НДС РФ не начисляется, налоги иностранного юрлица не учтены). Бобрук выходит в октябре — выключен. Иванова, Изосина и Цыганов за акселерацию не платят. Квартальные платежи пересчитаны в месячный эквивалент.</li>
+      <li><b>Нужно платящих.</b> Пороги считаются от текущего состава: каждый следующий клиент — по тарифу нового (500 000 с НДС, трекер 100 000, ЦК 25 000), то есть 284 836 ₽ вклада.</li>
       <li><b>Трекеры.</b> 100 000 за клиента при 4–5 встречах, меньше четырёх — 25 000 за встречу. Сабреев на NOIMA — 80 000 (меньше четырёх встреч — 20 000 за встречу). Трекер Диплодока не утверждён, временно стоит Алёшин.</li>
-      <li><b>Центр компетенций.</b> Боронина — 25 000 за клиента, фикса нет. По платящим — в вкладе подписки, по компаниям без подписки — в портфеле (оценка 4 × 25 000).</li>
+      <li><b>Центр компетенций.</b> Боронина — 25 000 за клиента, фикса нет. По платящим — во вкладе подписки, по компаниям без подписки — в портфеле (оценка 3 × 25 000: Oazis, Рыбак, Напор).</li>
       <li><b>Команда.</b> Дубровин и Ефимчук — 300 000 + 7% НПД; у Дубровина внутри Амина. Бердыев — 300 000 начислением, налог внутри.</li>
       <li><b>Сервисы.</b> Компенсации Бердыеву — сентябрьский акт 88 748 плюс две подписки Claude Code, добавленные с сентября (оценка по 200 $, курс 82, НПД 6%). Яндекс.Облако оплачивается фондом напрямую. Сверху запас до 210 000 на новые подписки.</li>
       <li><b>Административные.</b> С июля регулярного платежа за юристов и бухгалтерию нет: платёж УК 100 000 последний раз ушёл 03.06, дальше только разовые оплаты Силину и Инфинансу. В базе норма 100 000 и банковские комиссии 10 000. Строка УК выключена.</li>
-      <li><b>Портфель без подписки.</b> Трекинг Дубровина 600 000 — его сентябрьская выплата за август, состав по компаниям не подтверждён. Алёшин по WELCS — три встречи.</li>
+      <li><b>Портфель без подписки.</b> Трекинг Дубровина 600 000 — его сентябрьская выплата за август, состав по компаниям не подтверждён. Алёшин по WELCS перенесён в трекеры платящих: три встречи, 75 000.</li>
       <li><b>Мастермайнды.</b> Два события в год, вклад делится на 12. Август — факт 10 538 846 (выручка без НДС минус прямые расходы); бонусы ОП за гостей в этой цифре не вычтены. Декабрь — цель 17 476 000 × % сбора, минус смета Антальи 4 545 500 и комиссии 10% от выручки с НДС. На 01.10 собрано около 18% цели с учётом выставленных счетов.</li>
       <li><b>Не учтено.</b> Разовые расходы на нового клиента: 35 000 бонус ОП за активацию и 100 000 дьюдил при переходе к сделке. Остаток по договорам Силина 175 000. Калита и буферы маркетинга и продукта выключены. Налог на прибыль показан справочно, НДС к уплате не моделируется.</li>
     </ul></div></details>
 
-  <div class="ftr"><span>Считает один месяц. Платежи по кассе, кварталы и ММ разложены равномерно. Расходы на людей — начислением с налогом.</span><span>v3.0 · база 03.10.2026</span></div>
+  <div class="ftr"><span>Считает один месяц. Платежи по кассе, кварталы и ММ разложены равномерно. Расходы на людей — начислением с налогом.</span><span>v3.1 · база 03.10.2026</span></div>
 </div>
 <div class="toast" id="toast" hidden></div>
+<div id="tip" role="tooltip" hidden></div>
 
 <script>
 /* ═══════════ БАЗА 03.10.2026 ═══════════ */
@@ -305,6 +361,7 @@ const BASE = {
     {id:'c4', g:'pay', n:'Козырев — Система 10Х', s:'6 млн · трекер Алёшин', price:500000, trk:100000, on:true},
     {id:'c5', g:'pay', n:'Косолапов — NOIMA', s:'помесячно · трекер Сабреев 80 000', price:500000, trk:80000, on:true},
     {id:'c6', g:'pay', n:'Спирина — Диплодок', s:'помесячно · трекер не утверждён, стоит Алёшин', price:500000, trk:100000, on:true},
+    {id:'c8', g:'pay', n:'Островский — WELCS', s:'с августа · 500 000 на иностранное юрлицо, мимо рублёвой кассы · оплат ещё не было · трекер Алёшин, 3 встречи', price:500000, trk:75000, on:true, fx:true},
     {id:'c7', g:'pay', n:'Бобрук — 144 Капитал', s:'старый тариф · трекер Гор · выходит в октябре', price:416667, trk:100000, on:false},
     {id:'p1', g:'pipe', n:'Годуновы Денис и Дмитрий — Мебель Стайл', s:'комплектующие для мебели · ОП Ольга', price:500000, trk:100000, on:false},
     {id:'p2', g:'pipe', n:'Бондаренко Алексей — Карета Мобилити', s:'ОП Ольга', price:500000, trk:100000, on:false},
@@ -313,8 +370,7 @@ const BASE = {
   ],
   port: [
     {id:'f1', n:'Дубровин — Oazis, Рыбак, Напор', s:'трекинг по встречам · выплата сен за авг, состав не подтверждён', v:600000, on:true},
-    {id:'f2', n:'Алёшин — WELCS', s:'3 встречи × 25 000', v:75000, on:true},
-    {id:'f3', n:'Боронина — компании без подписки', s:'оценка: 4 × 25 000', v:100000, on:true},
+    {id:'f3', n:'Боронина — компании без подписки', s:'Oazis, Рыбак, Напор · оценка 3 × 25 000', v:75000, on:true},
   ],
 };
 const GROUPS_TEAM = ['Управление','Продажи и сервис','Платформа и сервисы','Административные'];
@@ -323,18 +379,23 @@ const LS_KEY = 'fond_model_scenarios_v3';
 /* ═══════════ расчёт ═══════════ */
 function calcOf(s){
   const net = g => g / (1 + s.vat);
+  const netOf = c => c.fx ? c.price : net(c.price);   // валютный контур: НДС РФ не начисляется
   const fixed = s.team.filter(t => t.on).reduce((a, t) => a + t.v, 0);
   const groups = {};
   s.team.forEach(t => { groups[t.g] = (groups[t.g] || 0) + (t.on ? t.v : 0); });
   const active = s.clients.filter(c => c.on);
-  const nPay = active.filter(c => c.g === 'pay').length;
-  const nPipe = active.filter(c => c.g === 'pipe').length;
+  const payOn = active.filter(c => c.g === 'pay');
+  const pipeOn = active.filter(c => c.g === 'pipe');
+  const pipeOff = s.clients.filter(c => c.g === 'pipe' && !c.on);
+  const nPay = payOn.length, nPipe = pipeOn.length;
   const nAll = active.length + s.newN;
   const revGross = active.reduce((a, c) => a + c.price, 0) + s.newN * s.price;
-  const revNet = net(revGross);
+  const fxRev = active.filter(c => c.fx).reduce((a, c) => a + c.price, 0);
+  const revNet = active.reduce((a, c) => a + netOf(c), 0) + s.newN * net(s.price);
   const trackers = active.reduce((a, c) => a + c.trk, 0) + s.newN * s.trk;
   const ck = nAll * s.ck;
-  const contrib = revNet - trackers - ck;
+  const variable = trackers + ck;
+  const contrib = revNet - variable;
   const accel = contrib - fixed;
   const port = s.port.filter(p => p.on).reduce((a, p) => a + p.v, 0);
   const oper = accel - port;
@@ -345,13 +406,13 @@ function calcOf(s){
   const total = oper + mm;
   const afterTax = total > 0 ? total * (1 - s.tax) : total;
   const perNew = net(s.price) - s.trk - s.ck;
-  const be = need => perNew > 0 ? Math.max(0, Math.ceil(need / perNew)) : null;
-  const beCore = be(fixed - (s.mm.on ? mm : 0));
-  const bePort = be(fixed + port - (s.mm.on ? mm : 0));
-  const gapCore = accel >= 0 ? 0 : (perNew > 0 ? Math.ceil(-accel / perNew) : null);
-  const gapOper = oper >= 0 ? 0 : (perNew > 0 ? Math.ceil(-oper / perNew) : null);
-  return { fixed, groups, nPay, nPipe, nAll, revGross, revNet, trackers, ck, contrib, accel,
-           port, oper, decGross, decContrib, mmYear, mm, total, afterTax, perNew, beCore, bePort, gapCore, gapOper };
+  // сколько платящих нужно, чтобы результат слоя был ≥ 0: от текущего состава, каждый следующий — по тарифу нового клиента
+  const need = res => perNew > 0 ? Math.max(1, res >= 0 ? nAll - Math.floor(res / perNew) : nAll + Math.ceil(-res / perNew)) : null;
+  const posCore = need(accel), posOper = need(oper), posTotal = need(total);
+  const gapCore = Math.max(0, posCore - nAll), gapOper = Math.max(0, posOper - nAll);
+  const inflow = revNet + mm, outflow = variable + fixed + port;
+  return { fixed, groups, payOn, pipeOn, pipeOff, nPay, nPipe, nAll, revGross, fxRev, revNet, trackers, ck, variable, contrib, accel,
+           port, oper, decGross, decContrib, mmYear, mm, total, afterTax, perNew, posCore, posOper, posTotal, gapCore, gapOper, inflow, outflow };
 }
 
 /* ═══════════ утилиты ═══════════ */
@@ -361,6 +422,10 @@ const Mf = n => (n / 1e6).toLocaleString('ru-RU', { minimumFractionDigits: 2, ma
 const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const numIn = v => { const n = parseFloat(String(v).replace(/[\s ]/g, '').replace(',', '.').replace('−', '-')); return isNaN(n) ? 0 : n; };
 const uid = p => p + Math.random().toString(36).slice(2, 8);
+const plural = (n, f) => { const a = Math.abs(n) % 100, b = a % 10; return f[(a > 10 && a < 20) ? 2 : b === 1 ? 0 : (b >= 2 && b <= 4) ? 1 : 2]; };
+const CL = ['клиент', 'клиента', 'клиентов'];
+const tipAttr = (title, body) => ` data-tip-t="${esc(title)}" data-tip="${esc(body)}" tabindex="0"`;
+const qi = (title, body) => `<span class="qi"${tipAttr(title, body)} aria-label="Пояснение: ${esc(title)}">i</span>`;
 function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 1800); }
 
 let S = clone(BASE);
@@ -423,64 +488,100 @@ function delta(now, base, fmt = Nf, lowerIsBetter = false){
 }
 function renderPanel(r){
   const b = BASE_R;
-  const gapTxt = g => g == null ? '—' : (g === 0 ? 'покрыто' : `не хватает ${g}`);
   document.getElementById('panel').innerHTML = `
   <div class="gauges">
-    <div class="g main"><span class="kick cu">${r.total >= 0 ? 'Остаётся в месяц' : 'Не хватает в месяц'}</span>
+    <div class="g main"><span class="kick cu">${r.total >= 0 ? 'Остаётся в месяц' : 'Не хватает в месяц'}${qi('Остаётся в месяц', 'Всё, что пришло за месяц, минус всё, что ушло: подписка без НДС, минус трекеры и ЦК, минус ядро, минус трекинг портфеля, плюс мастермайнды, если они включены. До налога на прибыль 25%.')}</span>
       <div class="v">${Nf(r.total)} ₽</div>
       <div class="d">${delta(r.total, b.total)}${r.total > 0 ? ` · после налога ${Nf(r.afterTax)}` : ''}</div>
       <div class="sw" role="group" aria-label="Мастермайнды"><button type="button" class="${S.mm.on ? '' : 'on'}" data-mm="0">без ММ</button><button type="button" class="${S.mm.on ? 'on' : ''}" data-mm="1">с ММ</button></div></div>
-    <div class="g"><span class="kick">Акселерация</span><div class="v">${Nf(r.accel)}</div><div class="d">подписка минус ядро<br>${delta(r.accel, b.accel)}</div></div>
-    <div class="g"><span class="kick">Платящих</span><div class="v">${r.nAll}</div><div class="d">${r.nPipe ? `в т.ч. ${r.nPipe} из заходящих · ` : ''}без НДС ${Nf(r.revNet)}<br>${delta(r.nAll, b.nAll, x => x)}</div></div>
-    <div class="g"><span class="kick">Безубыточность</span><div class="v">${r.beCore ?? '—'} / ${r.bePort ?? '—'}</div><div class="d">клиентов: ядро / ядро + портфель${S.mm.on ? ', с учётом ММ' : ''}<br>ядро: ${gapTxt(r.gapCore)} · с портфелем: ${gapTxt(r.gapOper)}</div></div>
-    <div class="g"><span class="kick">Фикс ядра</span><div class="v">${Nf(r.fixed)}</div><div class="d">команда, сервисы, админ<br>${delta(r.fixed, b.fixed, Nf, true)}</div></div>
+    <div class="g"><span class="kick">Акселерация${qi('Акселерация', 'Покрывает ли подписка команду. Выручка платящих без НДС минус трекеры и Центр компетенций минус ядро: команда, сервисы, административные. Портфель и мастермайнды сюда не входят.')}</span><div class="v">${Nf(r.accel)}</div><div class="d">подписка минус ядро<br>${delta(r.accel, b.accel)}</div></div>
+    <div class="g"><span class="kick">Платящих${qi('Платящих', 'Клиенты, которые в расчёте платят за акселерацию: текущие, включённые из заходящих и гипотетические новые. Тариф — с НДС в месяц; у Островского оплата на иностранное юрлицо, без НДС РФ.')}</span><div class="v">${r.nAll}</div><div class="d">${r.nPipe ? `в т.ч. ${r.nPipe} из заходящих · ` : ''}без НДС ${Nf(r.revNet)}<br>${delta(r.nAll, b.nAll, x => x)}</div></div>
+    <div class="g"><span class="kick">Нужно платящих${qi('Нужно платящих', 'Сколько платящих нужно, чтобы слой вышел в ноль. Первое число — чтобы подписка покрыла команду, второе — команду и трекинг портфеля. Считается от текущего состава: каждый следующий клиент — по тарифу нового.')}</span><div class="v">${r.posCore ?? '—'} / ${r.posOper ?? '—'}</div><div class="d">команда / команда + портфель<br>сейчас ${r.nAll}</div></div>
+    <div class="g"><span class="kick">Фикс ядра${qi('Фикс ядра', 'Расходы, которые не зависят от числа клиентов: команда, платформа и сервисы, административные. Трекеры и ЦК сюда не входят — они платятся за клиента.')}</span><div class="v">${Nf(r.fixed)}</div><div class="d">команда, сервисы, админ<br>${delta(r.fixed, b.fixed, Nf, true)}</div></div>
   </div>`;
 }
 
-/* ═══════════ каскад ═══════════ */
-function renderWaterfall(r){
-  const steps = [
-    { lab:'Вклад подписки', sub:`${r.nAll} платящих`, kind:'pos', v:r.contrib },
-    { lab:'Ядро', sub:'фикс', kind:'neg', v:-r.fixed },
-    { lab:'Акселерация', sub:'итог слоя', kind:'tot', v:r.accel, total:true },
-    { lab:'Портфель', sub:'без подписки', kind:'neg', v:-r.port },
-    { lab:'Операционный', sub:'без ММ', kind:'tot', v:r.oper, total:true },
-    { lab:'Мастермайнды', sub:S.mm.on ? '2 в год ÷ 12' : 'выключены', kind:'pos', v:r.mm },
-    { lab:'Остаётся', sub:'до налога', kind:'fin', v:r.total, total:true },
-  ];
-  let run = 0; const bars = [];
-  steps.forEach(st => {
-    if (st.total){ bars.push({ ...st, y0:0, y1:st.v }); run = st.v; }
-    else { bars.push({ ...st, y0:run, y1:run + st.v }); run += st.v; }
-  });
-  const vals = bars.flatMap(b => [b.y0, b.y1]).concat(0);
-  let lo = Math.min(...vals), hi = Math.max(...vals);
-  const pad = (hi - lo) * 0.12 || 5e5; lo -= pad; hi += pad;
-  const W = 760, H = 300, pl = 46, pr = 10, pt = 22, pb = 54;
-  const n = bars.length, slot = (W - pl - pr) / n, bw = Math.min(70, slot * 0.58);
-  const Y = v => pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb);
-  const step = niceStep((hi - lo) / 5);
-  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Каскад месяца: от вклада подписки до остатка">`;
-  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step){
-    s += `<line class="wf-grid" x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}"/><text class="wf-t" x="${pl - 6}" y="${Y(v) + 3}" text-anchor="end">${Mf(v).replace(/,00$/, '')}</text>`;
+function renderHero(r){
+  const n = r.nAll, pipeK = r.pipeOff.length;
+  let head;
+  if (r.oper >= 0) head = `Платят ${n}. Подписка покрывает и команду, и трекинг портфеля.`;
+  else if (r.accel >= 0) head = `Платят ${n}. Команду подписка покрывает, на портфель <em>не хватает ${r.gapOper} ${plural(r.gapOper, CL)}</em>.`;
+  else head = `Платят ${n}. Чтобы подписка покрыла команду, <em>не хватает ${r.gapCore} ${plural(r.gapCore, CL)}</em>.`;
+  const facts = [];
+  facts.push(r.accel >= 0 ? `Запас по команде <b>${Nf(r.accel)} ₽</b> в месяц` : `Команда: недобор <b>${Nf(-r.accel)} ₽</b> в месяц`);
+  facts.push(`Портфель без подписки стоит <b>${Nf(r.port)} ₽</b> в месяц`);
+  if (pipeK) facts.push(`На подписании ещё ${pipeK}: если зайдут все — <b>${n + pipeK}</b> платящих`);
+  facts.push(S.mm.on ? `С мастермайндами месяц ${r.total >= 0 ? 'в плюсе' : 'в минусе'}: <b>${Nf(r.total)} ₽</b>` : `Мастермайнды не учтены — переключатель «с ММ» ниже`);
+
+  // лестница клиентов
+  const ents = [];
+  r.payOn.forEach(c => ents.push({ k:'paid', n:c.n, s:c.fx ? 'платит на иностранное юрлицо' : 'платит' }));
+  r.pipeOn.forEach(c => ents.push({ k:'scen', n:c.n, s:'включён в сценарий' }));
+  for (let i = 0; i < S.newN; i++) ents.push({ k:'scen', n:'Новый клиент (гипотеза)', s:`${Nf(S.price)} в месяц` });
+  r.pipeOff.forEach(c => ents.push({ k:'pipe', n:c.n, s:'на подписании, в расчёт не включён' }));
+  const N = Math.min(30, Math.max(14, ents.length + 2, (r.posOper || 0) + 2, (r.posCore || 0) + 2));
+  const W = 780, H = 128, pl = 18, pr = 18, cy = 62, R = 9;
+  const X = i => pl + R + (i - 1) * ((W - pl - pr - 2 * R) / (N - 1));
+  let g = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Платящих ${n}, нужно ${r.posCore} для команды и ${r.posOper} для команды и портфеля">`;
+  g += `<line x1="${X(1)}" x2="${X(N)}" y1="${cy}" y2="${cy}" style="stroke:var(--line)" stroke-width="1"/>`;
+  for (let i = 1; i <= N; i++){
+    const e = ents[i - 1];
+    const cls = e ? 'ld-' + e.k : 'ld-empty';
+    const tt = e ? tipAttr(`${i}. ${e.n}`, e.s) : tipAttr(`Место ${i}`, 'Пока свободно. Каждый новый клиент по 500 000 в месяц добавляет ' + Nf(r.perNew) + ' ₽ после трекера и ЦК.');
+    g += `<circle class="${cls}" cx="${X(i)}" cy="${cy}" r="${R}"${tt}/>`;
+    g += `<text class="ld-n" x="${X(i)}" y="${cy + 4 + (i % 1)}" text-anchor="middle" dy="${R + 12}">${i}</text>`;
   }
-  s += `<line class="wf-zero" x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}"/>`;
-  s += `<text class="wf-t" x="${pl - 6}" y="${pt - 8}" text-anchor="end">МЛН ₽</text>`;
-  bars.forEach((b, i) => {
-    const cx = pl + slot * i + slot / 2, x = cx - bw / 2;
-    const top = Y(Math.max(b.y0, b.y1)), h = Math.max(1.5, Math.abs(Y(b.y0) - Y(b.y1)));
-    const cls = b.kind === 'pos' ? 'wf-pos' : b.kind === 'neg' ? 'wf-neg' : b.kind === 'fin' ? 'wf-fin' : 'wf-tot';
-    s += `<rect class="${cls}" x="${x}" y="${top}" width="${bw}" height="${h}"/>`;
-    if (i < n - 1){ const nx = pl + slot * (i + 1) + slot / 2 - bw / 2; s += `<line class="wf-link" x1="${x + bw}" x2="${nx}" y1="${Y(b.y1)}" y2="${Y(b.y1)}"/>`; }
-    const lblY = b.y1 >= b.y0 ? top - 6 : top + h + 13;
-    const shown = b.total ? b.v : (b.y1 - b.y0);
-    s += `<text class="wf-v" x="${cx}" y="${lblY}" text-anchor="middle">${(shown > 0 && !b.total ? '+' : '') + Mf(shown)}</text>`;
-    s += `<text class="wf-cap" x="${cx}" y="${H - pb + 18}" text-anchor="middle">${esc(b.lab)}</text>`;
-    s += `<text class="wf-t" x="${cx}" y="${H - pb + 32}" text-anchor="middle">${esc(b.sub)}</text>`;
-  });
-  document.getElementById('wf').innerHTML = s + '</svg>';
-  document.getElementById('cascadeNote').textContent = 'млн ₽ в месяц · без НДС · до налога';
+  const mark = (pos, top, label, cls, tip) => {
+    if (pos == null) return '';
+    const x = X(Math.min(pos, N)) ;
+    const y1 = top ? 22 : cy + R + 17, y2 = top ? cy - R - 3 : H - 22;
+    const ty = top ? 14 : H - 6;
+    const anchor = x > W - 150 ? 'end' : x < 150 ? 'start' : 'middle';
+    return `<g${tipAttr(label, tip)}><line class="${cls}" x1="${x}" x2="${x}" y1="${y1}" y2="${y2}"/><text class="ld-tl" x="${x}" y="${ty}" text-anchor="${anchor}">${label} · ${pos}</text></g>`;
+  };
+  g += mark(r.posCore, true, 'Покрыть команду', 'ld-th', `С этим числом платящих подписка (без НДС, минус трекеры и ЦК) покрывает ядро: команду, сервисы и административные. Ядро — ${Nf(r.fixed)} ₽ в месяц.`);
+  g += mark(r.posOper, false, 'Покрыть команду и портфель', 'ld-th2', `Плюс трекинг компаний без подписки — Oazis, Рыбак, Напор: ${Nf(r.port)} ₽ в месяц. Мастермайнды в этом пороге не учтены.`);
+  g += '</svg>';
+
+  document.getElementById('hero').innerHTML = `
+    <div class="lead-k"><span class="kick cu">Главное</span><span class="kick">месяц · без НДС · до налога на прибыль</span></div>
+    <h2>${head}</h2>
+    <div class="facts">${facts.map(f => `<span>${f}</span>`).join('')}</div>
+    <div class="ladder">${g}</div>
+    <div class="keys">
+      <span><i class="kd paid"></i>платит</span>
+      <span><i class="kd sc"></i>добавлен в сценарии</span>
+      <span><i class="kd pipe"></i>на подписании, не включён</span>
+      <span><i class="kd empty"></i>свободное место</span>
+      <span><i class="kl"></i>порог: команда</span>
+      <span><i class="kl d"></i>порог: команда и портфель</span>
+    </div>`;
 }
+
+function renderMoney(r){
+  const inSegs = [
+    { c:'s-sub', t:'Подписка', v:r.revNet, tip:['Подписка без НДС', `${r.nAll} платящих. Тарифы с НДС ${Nf(r.revGross)} ₽ в месяц, без НДС ${Nf(r.revNet)} ₽.${r.fxRev ? ` Из них ${Nf(r.fxRev)} — оплата на иностранное юрлицо, мимо рублёвой кассы.` : ''} Квартальные платежи разложены по месяцам.`] },
+  ];
+  if (S.mm.on) inSegs.push({ c:'s-mm', t:'Мастермайнды', v:r.mm, tip:['Мастермайнды, в среднем', `Два события в год, вклад делится на 12. Август по факту ${Nf(S.mm.aug)} ₽, декабрь по плану ${Nf(r.decContrib)} ₽ при сборе ${Nf(S.mm.decPct)}% цели. Деньги приходят дважды в год, не каждый месяц.`] });
+  const outSegs = [
+    { c:'s-var', t:'Трекеры и ЦК', v:r.variable, tip:['Трекеры и Центр компетенций', `Платятся за каждого платящего клиента. Трекеры ${Nf(r.trackers)} ₽, ЦК ${Nf(r.ck)} ₽ (${Nf(S.ck)} × ${r.nAll}). Растут вместе с числом клиентов.`] },
+    { c:'s-core', t:'Ядро', v:r.fixed, tip:['Ядро', `Не зависит от числа клиентов. Команда ${Nf((r.groups['Управление']||0) + (r.groups['Продажи и сервис']||0))} ₽, платформа и сервисы ${Nf(r.groups['Платформа и сервисы']||0)} ₽, административные ${Nf(r.groups['Административные']||0)} ₽.`] },
+    { c:'s-port', t:'Портфель', v:r.port, tip:['Трекинг портфеля без подписки', `Компании на опционе и на сделке за акселерацию не платят, но мы их ведём. Это вложение в долю: ${Nf(r.port)} ₽ в месяц, ${Nf(r.port * 12)} ₽ в год.`] },
+  ];
+  const diff = r.inflow - r.outflow;
+  const max = Math.max(r.inflow, r.outflow) || 1;
+  if (diff > 0) outSegs.push({ c:'s-plus', t:'Остаётся', v:diff, tip:['Остаётся', `Приход больше расхода на ${Nf(diff)} ₽ в месяц до налога на прибыль. После налога 25% — ${Nf(diff * 0.75)} ₽.`] });
+  if (diff < 0) inSegs.push({ c:'s-minus', t:'Не хватает', v:-diff, tip:['Не хватает', `Расход больше прихода на ${Nf(-diff)} ₽ в месяц. Это закрывают ${Math.ceil(-diff / r.perNew)} ${plural(Math.ceil(-diff / r.perNew), CL)} по 500 000${S.mm.on ? '' : ' или мастермайнды'}.`] });
+  const bar = segs => segs.map(sg => `<div class="seg ${sg.c}" style="flex:0 0 ${(sg.v / max * 100).toFixed(3)}%"${tipAttr(sg.tip[0], sg.tip[1] + ' · ' + Nf(sg.v) + ' ₽')}><span class="t">${sg.t}</span><span class="v">${Mf(sg.v)} млн</span></div>`).join('');
+  const list = segs => segs.filter(sg => sg.c !== 's-plus' && sg.c !== 's-minus').map(sg => `<div><span>${sg.t}</span><b>${Nf(sg.v)}</b></div>`).join('');
+  document.getElementById('money').innerHTML = `
+    <div class="money-head"><h2>Деньги за месяц: что приходит и куда уходит${qi('Как читать', 'Две полосы в одном масштабе. Верхняя — что приходит, нижняя — что уходит. Если приход длиннее, разница — медный отрезок «остаётся». Если короче — пунктирный «не хватает». Наведи на любой отрезок, чтобы увидеть состав.')}</h2><span class="kick">₽ в месяц · без НДС · до налога</span></div>
+    <div class="mrow"><div class="lab">Приход<small>${S.mm.on ? 'подписка + ММ' : 'подписка'}</small></div><div class="bar">${bar(inSegs)}</div><div class="sum">${Nf(r.inflow)}</div></div>
+    <div class="mrow"><div class="lab">Расход<small>3 слоя</small></div><div class="bar">${bar(outSegs)}</div><div class="sum">${Nf(r.outflow)}</div></div>
+    <div class="verdict"><span class="vt">${diff >= 0 ? 'Остаётся в месяц' : 'Не хватает в месяц'}${S.mm.on ? ', с мастермайндами' : ', без мастермайндов'}</span><span class="vv">${diff >= 0 ? '' : '−'}${Nf(Math.abs(diff))} ₽</span></div>
+    <div class="mlist">${list(inSegs)}${list(outSegs)}</div>`;
+}
+
 function niceStep(raw){ const p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2.5 : m < 7.5 ? 5 : 10) * p; }
 
 /* ═══════════ ручки ═══════════ */
@@ -560,7 +661,7 @@ function renderMM(r){
 function renderLedger(r){
   const L = (a, b, sub, cls = '') => `<tr class="${cls}"><td>${a}${sub ? `<span class="sub">${sub}</span>` : ''}</td><td class="a">${b}</td></tr>`;
   document.getElementById('ledger').innerHTML = `<table class="ledger">
-    ${L('Выручка акселерации без НДС', Nf(r.revNet), `${r.nAll} платящих · ${Nf(r.revGross)} с НДС`)}
+    ${L('Выручка акселерации без НДС', Nf(r.revNet), `${r.nAll} платящих · ${Nf(r.revGross)} по тарифам${r.fxRev ? ` · в т.ч. ${Nf(r.fxRev)} на иностранное юрлицо, без НДС РФ` : ''}`)}
     ${L('Трекеры', '−' + Nf(r.trackers))}
     ${L('Центр компетенций', '−' + Nf(r.ck), `${Nf(S.ck)} × ${r.nAll}`)}
     ${L('Вклад подписки', Nf(r.contrib), '', 'sum')}
@@ -575,10 +676,11 @@ function renderLedger(r){
   </table>`;
 }
 function renderCurve(r){
-  const N = 16, mm = r.mm;
-  const core = [], full = [];
-  for (let n = 0; n <= N; n++){ core.push(n * r.perNew - r.fixed + mm); full.push(n * r.perNew - r.fixed - r.port + mm); }
-  const ys = core.concat(full, [0, r.accel + mm, r.total]);
+  const N = Math.max(16, r.nAll + 4);
+  const at = (res, n) => res + (n - r.nAll) * r.perNew;
+  const core = [], full = [], withMM = [];
+  for (let n = 0; n <= N; n++){ core.push(at(r.accel, n)); full.push(at(r.oper, n)); withMM.push(at(r.total, n)); }
+  const ys = core.concat(full, S.mm.on ? withMM : [], [0]);
   let lo = Math.min(...ys), hi = Math.max(...ys); const pad = (hi - lo) * 0.08 || 1e5; lo -= pad; hi += pad;
   const W = 680, H = 270, pl = 46, pr = 16, pt = 18, pb = 34;
   const X = n => pl + n / N * (W - pl - pr), Y = v => pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb);
@@ -587,20 +689,20 @@ function renderCurve(r){
   for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) s += `<line class="wf-grid" x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}"/><text class="wf-t" x="${pl - 6}" y="${Y(v) + 3}" text-anchor="end">${Mf(v).replace(/,00$/, '')}</text>`;
   s += `<line class="wf-zero" x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}"/>`;
   for (let n = 0; n <= N; n += 2) s += `<text class="wf-t" x="${X(n)}" y="${H - 14}" text-anchor="middle">${n}</text>`;
-  s += `<text class="wf-t" x="${W - pr}" y="${H - 1}" text-anchor="end">ПЛАТЯЩИХ КЛИЕНТОВ ПО ${Nf(S.price)}</text>`;
-  s += `<polyline fill="none" style="stroke:var(--petrol)" stroke-width="2" points="${core.map((y, n) => X(n) + ',' + Y(y)).join(' ')}"/>`;
-  s += `<polyline fill="none" style="stroke:var(--petrol)" stroke-width="1.5" stroke-dasharray="5 4" points="${full.map((y, n) => X(n) + ',' + Y(y)).join(' ')}"/>`;
-  [[r.beCore, 'ЯДРО'], [r.bePort, 'С ПОРТФЕЛЕМ']].forEach(([b, t]) => { if (b != null && b <= N){ s += `<circle cx="${X(b)}" cy="${Y(0)}" r="4.5" style="fill:var(--card);stroke:var(--petrol)" stroke-width="1.5"/><text class="wf-t" x="${X(b)}" y="${Y(0) + 16}" text-anchor="middle">${t} · ${b}</text>`; } });
-  const nx = Math.min(N, r.nAll);
-  s += `<circle cx="${X(nx)}" cy="${Y(r.total)}" r="5.5" style="fill:var(--copper)"/><text class="wf-t" x="${X(nx) + 9}" y="${Y(r.total) - 6}" style="fill:var(--copper)">СЕЙЧАС · ${r.nAll}</text>`;
-  s += `</svg></div><p class="note" style="margin-top:6px">Сплошная линия — подписка против ядра, пунктир — после портфеля${S.mm.on ? '; обе с учётом ММ' : ''}. Кольца — безубыточность. Медная точка — текущий сценарий; портфель смешанный (старый тариф, разные ставки трекеров), поэтому точка может лежать не на линии.</p>`;
+  s += `<text class="wf-t" x="${W - pr}" y="${H - 1}" text-anchor="end">ПЛАТЯЩИХ КЛИЕНТОВ</text><text class="wf-t" x="${pl - 6}" y="${pt - 6}" text-anchor="end">МЛН ₽</text>`;
+  const line = (arr, dash, w, st) => `<polyline fill="none" style="stroke:${st}" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ''} points="${arr.map((y, n) => X(n) + ',' + Y(y)).join(' ')}"/>`;
+  s += line(core, '', 2, 'var(--petrol)') + line(full, '5 4', 1.5, 'var(--petrol)');
+  if (S.mm.on) s += line(withMM, '1.5 3', 1.75, 'var(--copper)');
+  [[r.posCore, 'КОМАНДА'], [r.posOper, 'С ПОРТФЕЛЕМ']].forEach(([b, t]) => { if (b != null && b <= N){ s += `<circle cx="${X(b)}" cy="${Y(0)}" r="4.5" style="fill:var(--card);stroke:var(--petrol)" stroke-width="1.5"/><text class="wf-t" x="${X(b)}" y="${Y(0) + 16}" text-anchor="middle">${t} · ${b}</text>`; } });
+  s += `<circle cx="${X(r.nAll)}" cy="${Y(S.mm.on ? r.total : r.oper)}" r="5.5" style="fill:var(--copper)"/><text class="wf-t" x="${X(r.nAll) + 9}" y="${Y(S.mm.on ? r.total : r.oper) - 6}" style="fill:var(--copper)">СЕЙЧАС · ${r.nAll}</text>`;
+  s += `</svg></div><p class="note" style="margin-top:6px">Сплошная линия — подписка против ядра, пунктир — после трекинга портфеля${S.mm.on ? ', медная точечная — с мастермайндами' : ''}. Линии идут от текущего состава клиентов: каждый следующий — по ${Nf(S.price)} в месяц и даёт ${Nf(r.perNew)} ₽. Кольца — пороги из блока «Главное».</p>`;
   document.getElementById('curve').innerHTML = s;
 }
 
 /* ═══════════ рендер и действия ═══════════ */
 function render(){
   const r = calcOf(S);
-  renderPanel(r); renderWaterfall(r); renderTeam(r); renderClients(r); renderPort(r); renderMM(r); renderLedger(r); renderCurve(r); renderList();
+  renderHero(r); renderPanel(r); renderMoney(r); renderTeam(r); renderClients(r); renderPort(r); renderMM(r); renderLedger(r); renderCurve(r); renderList();
   document.getElementById('curName').textContent = S.name || 'Без названия';
   document.getElementById('curState').textContent = dirty ? '· изменён, не сохранён' : '';
 }
@@ -653,6 +755,34 @@ document.getElementById('btnImport').addEventListener('click', () => {
   if (!st){ msg.textContent = 'Код не читается — проверь, что он скопирован целиком.'; return; }
   S = st; dirty = true; msg.textContent = 'Открыт: ' + (S.name || 'сценарий') + '. Сохрани, чтобы он остался на этом устройстве.'; render();
 });
+
+/* ═══════════ подсказки ═══════════ */
+const tipEl = document.getElementById('tip');
+let tipPinned = null;
+function showTip(el, x, y){
+  const t = el.getAttribute('data-tip-t'), b = el.getAttribute('data-tip');
+  if (!b && !t) return;
+  tipEl.innerHTML = (t ? `<b>${esc(t)}</b>` : '') + esc(b || '').replace(/(−?\d[\d\s ]*\d ₽)/g, '<span class="tn">$1</span>');
+  tipEl.hidden = false;
+  const w = tipEl.offsetWidth, h = tipEl.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+  let left = x + 14, top = y + 16;
+  if (left + w > vw - 8) left = Math.max(8, x - w - 14);
+  if (top + h > vh - 8) top = Math.max(8, y - h - 12);
+  tipEl.style.left = left + 'px'; tipEl.style.top = top + 'px';
+}
+function hideTip(){ tipEl.hidden = true; tipPinned = null; }
+document.addEventListener('mouseover', e => { const el = e.target.closest('[data-tip]'); if (el && !tipPinned) showTip(el, e.clientX, e.clientY); });
+document.addEventListener('mousemove', e => { if (tipPinned || tipEl.hidden) return; const el = e.target.closest('[data-tip]'); if (el) showTip(el, e.clientX, e.clientY); else hideTip(); });
+document.addEventListener('mouseout', e => { if (!tipPinned && !e.relatedTarget?.closest?.('[data-tip]')) hideTip(); });
+document.addEventListener('focusin', e => { const el = e.target.closest('[data-tip]'); if (el){ const rc = el.getBoundingClientRect(); showTip(el, rc.left + rc.width / 2, rc.bottom); } });
+document.addEventListener('focusout', () => { if (!tipPinned) hideTip(); });
+document.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse') return;
+  const el = e.target.closest('[data-tip]');
+  if (el && el !== tipPinned){ tipPinned = el; const rc = el.getBoundingClientRect(); showTip(el, rc.left + rc.width / 2, rc.bottom); }
+  else hideTip();
+});
+window.addEventListener('scroll', () => { if (!tipEl.hidden) hideTip(); }, { passive: true });
 
 (function init(){
   const h = location.hash;
