@@ -244,6 +244,21 @@ details .body{padding:0 18px 16px;overflow-x:auto}
 .ftr{margin-top:28px;padding-top:12px;border-top:.75px solid var(--line);font-size:11.5px;color:var(--ink2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--hdr-bg);color:var(--hdr-fg);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;z-index:9}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+/* вкладки */
+.tabs{display:flex;gap:4px;border-bottom:.75px solid var(--line);margin-top:10px;flex-wrap:wrap}
+.tab{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:10px 14px 9px;border:0;background:none;color:var(--ink2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-.75px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--copper)}
+.tab small{font-family:var(--sans);font-size:11px;letter-spacing:0;text-transform:none;color:var(--muted);margin-left:6px}
+.dt-note{margin-top:14px;padding:10px 14px;border:.75px dashed var(--copper);font-size:12.5px;color:var(--ink2);background:var(--card)}
+.dt-note b{color:var(--copper)}
+/* строки только для чтения */
+.row .rov{font-family:var(--mono);font-size:12.5px;text-align:right;padding:5px 0;font-variant-numeric:tabular-nums}
+.lnk{background:none;border:0;padding:0;color:var(--petrol);text-decoration:underline;cursor:pointer;font:inherit}
+.lnk:hover{color:var(--copper)}
+.ctx{font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.5}
+.ctx b{color:var(--ink);font-weight:500}
 </style></head><body>
 
 <div class="wrap">
@@ -252,7 +267,7 @@ details .body{padding:0 18px 16px;overflow-x:auto}
       <span class="logo" aria-hidden="true"><i class="a"></i><i class="l"></i><i class="b"></i></span>
       <div class="kick" style="margin-top:12px">Фонд-акселератор · один месяц в стационарном режиме</div>
       <h1>Калькулятор контура</h1>
-      <div class="sub">Сколько платящих клиентов акселерации покрывают команду, сколько стоит портфель без подписки и что добавляют мастермайнды. Без НДС, до налога на прибыль, ставки как платим. База — 03.10.2026.</div>
+      <div class="sub">Сколько платящих клиентов акселерации покрывают команду, сколько стоит портфель без подписки и что добавляют мастермайнды. Без НДС, до налога на прибыль. База — 03.10.2026.</div>
     </div>
     <button class="btn" type="button" id="btnReset">Вернуть базу 03.10</button>
   </div></div>
@@ -286,118 +301,156 @@ details .body{padding:0 18px 16px;overflow-x:auto}
     </div>
   </div>
 
-  <div class="section hero" id="hero"></div>
-
-  <div class="panel" id="panel"></div>
-
-  <div class="section money" id="money"></div>
-
-  <div class="cols">
-    <div class="stack">
-      <div class="card" id="teamCard"></div>
-    </div>
-    <div class="stack">
-      <div class="card" id="clientCard"></div>
-      <div class="card" id="portCard"></div>
-      <div class="card" id="mmCard"></div>
-    </div>
+<!--DT_START-->
+  <div class="tabs" role="tablist" aria-label="Режим">
+    <button class="tab on" type="button" role="tab" id="tab-ov" aria-selected="true" aria-controls="pane-ov" data-tab="ov">Обзор<small>суммы по статьям</small></button>
+    <button class="tab" type="button" role="tab" id="tab-dt" aria-selected="false" aria-controls="pane-dt" data-tab="dt">Детали<small>по людям и ставкам</small></button>
   </div>
+<!--DT_END-->
 
-  <details id="dLedger"><summary><span class="chev"></span>Ведомость: от выручки до результата</summary><div class="body" id="ledger"></div></details>
-  <details id="dCurve"><summary><span class="chev"></span>Результат в месяц от числа платящих клиентов</summary><div class="body" id="curve"></div></details>
-  <details id="dAssume"><summary><span class="chev"></span>Допущения базы 03.10 и что не учтено</summary><div class="body">
-    <ul class="assume">
-      <li><b>Подписка.</b> С ноября платят семеро: Бражников (старый тариф 5 млн), Лебедев, Новик-Качан, Козырев, Косолапов, Спирина (по 6 млн) и Островский — WELCS (500 000 в месяц на иностранное юрлицо, с августа; оплат ещё не было, НДС РФ не начисляется, налоги иностранного юрлица не учтены). Бобрук выходит в октябре — выключен. Иванова, Изосина и Цыганов за акселерацию не платят. Квартальные платежи пересчитаны в месячный эквивалент.</li>
-      <li><b>Нужно платящих.</b> Пороги считаются от текущего состава: каждый следующий клиент — по тарифу нового (500 000 с НДС, трекер 100 000, ЦК 25 000), то есть 284 836 ₽ вклада.</li>
-      <li><b>Трекеры.</b> 100 000 за клиента при 4–5 встречах, меньше четырёх — 25 000 за встречу. Сабреев на NOIMA — 80 000 (меньше четырёх встреч — 20 000 за встречу). Трекер Диплодока не утверждён, временно стоит Алёшин.</li>
-      <li><b>Центр компетенций.</b> Боронина — 25 000 за клиента, фикса нет. По платящим — во вкладе подписки, по компаниям без подписки — в портфеле (оценка 3 × 25 000: Oazis, Рыбак, Напор).</li>
-      <li><b>Команда.</b> Дубровин и Ефимчук — 300 000 + 7% НПД; у Дубровина внутри Амина. Бердыев — 300 000 начислением, налог внутри.</li>
-      <li><b>Сервисы.</b> Компенсации Бердыеву — сентябрьский акт 88 748 плюс две подписки Claude Code, добавленные с сентября (оценка по 200 $, курс 82, НПД 6%). Яндекс.Облако оплачивается фондом напрямую. Сверху запас до 210 000 на новые подписки.</li>
-      <li><b>Административные.</b> С июля регулярного платежа за юристов и бухгалтерию нет: платёж УК 100 000 последний раз ушёл 03.06, дальше только разовые оплаты Силину и Инфинансу. В базе норма 100 000 и банковские комиссии 10 000. Строка УК выключена.</li>
-      <li><b>Портфель без подписки.</b> Трекинг Дубровина 600 000 — его сентябрьская выплата за август, состав по компаниям не подтверждён. Алёшин по WELCS перенесён в трекеры платящих: три встречи, 75 000.</li>
-      <li><b>Мастермайнды.</b> Два события в год, вклад делится на 12. Август — факт 10 538 846 (выручка без НДС минус прямые расходы); бонусы ОП за гостей в этой цифре не вычтены. Декабрь — цель 17 476 000 × % сбора, минус смета Антальи 4 545 500 и комиссии 10% от выручки с НДС. На 01.10 собрано около 18% цели с учётом выставленных счетов.</li>
-      <li><b>Не учтено.</b> Разовые расходы на нового клиента: 35 000 бонус ОП за активацию и 100 000 дьюдил при переходе к сделке. Остаток по договорам Силина 175 000. Калита и буферы маркетинга и продукта выключены. Налог на прибыль показан справочно, НДС к уплате не моделируется.</li>
-    </ul></div></details>
+  <section id="pane-ov" role="tabpanel" aria-labelledby="tab-ov">
+    <div class="section hero" id="hero"></div>
+    <div class="panel" id="panel"></div>
+    <div class="section money" id="money"></div>
+    <div class="cols">
+      <div class="stack"><div class="card" id="expOv"></div></div>
+      <div class="stack">
+        <div class="card" id="cliOv"></div>
+        <div class="card" id="portOv"></div>
+        <div class="card" id="mmCard"></div>
+      </div>
+    </div>
+    <details><summary><span class="chev"></span>Ведомость: от выручки до результата</summary><div class="body" id="ledgerOv"></div></details>
+    <details><summary><span class="chev"></span>Результат в месяц от числа платящих клиентов</summary><div class="body" id="curve"></div></details>
+    <details><summary><span class="chev"></span>Допущения базы 03.10 и что не учтено</summary><div class="body">
+      <ul class="assume">
+        <li><b>Подписка.</b> С ноября платят семеро: Лига Миров (старый тариф 5 млн), Дом Гирлянд, BALORI, Система 10Х, NOIMA, Диплодок (по 6 млн) и WELCS — 500 000 в месяц на иностранное юрлицо с августа, оплат ещё не было; НДС РФ с него не начисляется, налоги иностранного юрлица не учтены. 144 Капитал выходит в октябре и выключен. Oazis, Рыбак и Напор за акселерацию не платят. Квартальные платежи разложены по месяцам.</li>
+        <li><b>Сопровождение клиентов.</b> Трекер — за клиента при 4–5 встречах в месяц, при меньшем числе — за встречу. Центр компетенций — за каждую компанию портфеля, включая компании без подписки. Бизнес-инженер — почасово, до 10 часов в месяц; в базе 8 часов по факту сентября.</li>
+        <li><b>Команда.</b> Начислением, с налогами. Одна сумма; состав — внутри фонда.</li>
+        <li><b>Подписки и инфраструктура.</b> По позициям, плюс запас на новые подписки до 210 000 в месяц.</li>
+        <li><b>Административные.</b> С июля регулярного платежа за юристов и бухгалтерию нет, только разовые оплаты. В базе норма 100 000 и банковские комиссии 10 000.</li>
+        <li><b>Портфель без подписки.</b> Трекинг Oazis, Рыбака и Напора — по встречам, по сентябрьской выплате; плюс Центр компетенций по трём компаниям.</li>
+        <li><b>Мастермайнды.</b> Два события в год, вклад делится на 12. Август — факт (выручка без НДС минус прямые расходы, бонусы ОП за гостей не вычтены). Декабрь — цель × % сбора, минус смета Антальи и комиссии 10% от выручки с НДС. На 01.10 собрано около 18% цели с учётом счетов.</li>
+        <li><b>Нужно платящих.</b> Пороги считаются от текущего состава: каждый следующий клиент — по тарифу нового.</li>
+        <li><b>Не учтено.</b> Разовые расходы на нового клиента (бонус ОП за активацию, дьюдил при переходе к сделке), остаток по юридическим договорам, налог на прибыль — показан справочно, НДС к уплате не моделируется.</li>
+      </ul></div></details>
+  </section>
 
-  <div class="ftr"><span>Считает один месяц. Платежи по кассе, кварталы и ММ разложены равномерно. Расходы на людей — начислением с налогом.</span><span>v3.1 · база 03.10.2026</span></div>
+<!--DT_START-->
+  <section id="pane-dt" role="tabpanel" aria-labelledby="tab-dt" hidden>
+    <div class="dt-note"><b>Вкладка для команды.</b> Здесь суммы по людям и ставки трекеров. На показе держи открытым «Обзор» — там только итоги по статьям.</div>
+    <div class="cols">
+      <div class="stack"><div class="card" id="teamDt"></div></div>
+      <div class="stack">
+        <div class="card" id="cliDt"></div>
+        <div class="card" id="ratesDt"></div>
+        <div class="card" id="portDt"></div>
+      </div>
+    </div>
+    <details open><summary><span class="chev"></span>Ведомость с разбивкой</summary><div class="body" id="ledgerDt"></div></details>
+    <details><summary><span class="chev"></span>Допущения по людям и ставкам</summary><div class="body">
+      <ul class="assume">
+        <li><b>Команда.</b> Дубровин и Ефимчук — 300 000 + 7% НПД; у Дубровина внутри Амина. Бердыев — 300 000 начислением, налог внутри. Калита — проектно, выключен.</li>
+        <li><b>Трекеры.</b> 100 000 за клиента при 4–5 встречах, меньше четырёх — 25 000 за встречу. Сабреев на NOIMA — 80 000 (меньше четырёх встреч — 20 000 за встречу). Алёшин по WELCS — 3 встречи, 75 000. Трекер Диплодока не утверждён, стоит Алёшин.</li>
+        <li><b>Боронина.</b> 25 000 за каждую компанию портфеля, налог внутри; плюс БИ по 6 000 за час, до 10 часов в месяц, всё в одном счёте. Сентябрь 248 000 = 8 × 25 000 + 8 ч × 6 000.</li>
+        <li><b>Подписки разработки.</b> Компенсации Бердыеву — сентябрьский акт 88 748 плюс две подписки Claude Code с сентября (оценка 200 $ × 82 с НПД 6%). Яндекс.Облако оплачивается фондом напрямую.</li>
+        <li><b>Портфель.</b> Трекинг Дубровина 600 000 — выплата сентября за август, состав по компаниям не подтверждён.</li>
+      </ul></div></details>
+  </section>
+<!--DT_END-->
+
+  <div class="ftr"><span>Считает один месяц. Платежи по кассе, кварталы и ММ разложены равномерно. Расходы на людей — начислением с налогом.</span><span id="ver">v3.2 · база 03.10.2026</span></div>
 </div>
 <div class="toast" id="toast" hidden></div>
 <div id="tip" role="tooltip" hidden></div>
-
 <script>
-/* ═══════════ БАЗА 03.10.2026 ═══════════ */
+const BUILD = 'full';
+/*BASE_START*/
 const BASE = {
   name: 'База 03.10',
   vat: 0.22, tax: 0.25, price: 500000, trk: 100000, ck: 25000, newN: 0,
+  bi: { hours: 8, rate: 6000 },
+  portCos: 3,
   mm: { on: false, aug: 10538846, decTarget: 17476000, decPct: 100, decCost: 4545500, decComm: 0.10 },
   team: [
-    {id:'t1', g:'Управление', n:'Дубровин Евгений', s:'CEO · вместе с Аминой · 300 000 + 7%', v:322581, on:true},
-    {id:'t2', g:'Управление', n:'Ефимчук Екатерина', s:'CPO / COO · 300 000 + 7%', v:322581, on:true},
-    {id:'t3', g:'Управление', n:'Белов Артём', s:'CFO', v:250000, on:true},
-    {id:'t4', g:'Управление', n:'Карпова Анастасия', s:'проджект, с октября', v:100000, on:true},
-    {id:'t5', g:'Продажи и сервис', n:'Хмелинин Сергей', s:'МОП, фикс · бонусы от продаж не здесь', v:85106, on:true},
-    {id:'t6', g:'Продажи и сервис', n:'Айнабекова Ольга', s:'МОП, фикс', v:85106, on:true},
-    {id:'t7', g:'Продажи и сервис', n:'Надршина Эля', s:'аккаунт ЦК', v:85106, on:true},
-    {id:'t8', g:'Продажи и сервис', n:'Бойбобоев Амир', s:'СММ', v:31915, on:true},
-    {id:'t9', g:'Продажи и сервис', n:'Калита Тимофей', s:'конкурентная разведка, проектно · включать в месяцы с заказом', v:53191, on:false},
-    {id:'t10', g:'Платформа и сервисы', n:'Бердыев Александр', s:'CIO · 300 000 начислением', v:300000, on:true},
-    {id:'t11', g:'Платформа и сервисы', n:'Компенсации Бердыеву', s:'Claude Code ×4, OpenAI, Zoom, ВПН · акт сен 88 748 + 2 подписки', v:123642, on:true},
-    {id:'t12', g:'Платформа и сервисы', n:'Яндекс.Облако', s:'сервер платформы, оплата фондом', v:15000, on:true},
-    {id:'t13', g:'Платформа и сервисы', n:'Claude — Ефимчук', s:'149 999 ₸ в месяц', v:28000, on:true},
-    {id:'t14', g:'Платформа и сервисы', n:'Claude — Калита', s:'подписка', v:12500, on:true},
-    {id:'t15', g:'Платформа и сервисы', n:'амоЦРМ', s:'годовая оплата 59 950 + квартальная 7 188', v:7008, on:true},
-    {id:'t16', g:'Платформа и сервисы', n:'Wazzup', s:'Telegram для ОП', v:4000, on:true},
-    {id:'t17', g:'Платформа и сервисы', n:'Google Workspace', s:'20 $', v:1640, on:true},
-    {id:'t18', g:'Платформа и сервисы', n:'Запас на новые подписки', s:'доводит сервисы до 210 000', v:18210, on:true},
-    {id:'t19', g:'Административные', n:'Юристы, бухгалтерия, дьюдил', s:'норма · с июля только разовые оплаты', v:100000, on:true},
-    {id:'t20', g:'Административные', n:'Банковские комиссии', s:'Консоль, Точка', v:10000, on:true},
-    {id:'t21', g:'Административные', n:'Услуги УК', s:'платёж остановлен после июня', v:100000, on:false},
-    {id:'t22', g:'Административные', n:'Маркетинг и продукт — буфер', s:'бюджет плана, факта с июня нет', v:71428, on:false},
+    {id:'t1', k:'person', g:'Управление', n:'Дубровин Евгений', s:'CEO · вместе с Аминой · 300 000 + 7%', v:322581, on:true},
+    {id:'t2', k:'person', g:'Управление', n:'Ефимчук Екатерина', s:'CPO / COO · 300 000 + 7%', v:322581, on:true},
+    {id:'t3', k:'person', g:'Управление', n:'Белов Артём', s:'CFO', v:250000, on:true},
+    {id:'t4', k:'person', g:'Управление', n:'Карпова Анастасия', s:'проджект, с октября', v:100000, on:true},
+    {id:'t5', k:'person', g:'Продажи и сервис', n:'Хмелинин Сергей', s:'МОП, фикс · бонусы от продаж не здесь', v:85106, on:true},
+    {id:'t6', k:'person', g:'Продажи и сервис', n:'Айнабекова Ольга', s:'МОП, фикс', v:85106, on:true},
+    {id:'t7', k:'person', g:'Продажи и сервис', n:'Надршина Эля', s:'аккаунт ЦК', v:85106, on:true},
+    {id:'t8', k:'person', g:'Продажи и сервис', n:'Бойбобоев Амир', s:'СММ', v:31915, on:true},
+    {id:'t9', k:'person', g:'Продажи и сервис', n:'Калита Тимофей', s:'конкурентная разведка, проектно · включать в месяцы с заказом', v:53191, on:false, aggName:'Проектная работа', aggPub:'разведка, по заказу'},
+    {id:'t10', k:'person', g:'Платформа и сервисы', n:'Бердыев Александр', s:'CIO · 300 000 начислением', v:300000, on:true},
+    {id:'s1', k:'service', g:'Платформа и сервисы', n:'Подписки разработки', pub:'Claude Code ×4, OpenAI, Zoom, ВПН', s:'компенсации Бердыеву · акт сен 88 748 + 2 подписки Claude Code с сентября', v:123642, on:true},
+    {id:'s2', k:'service', g:'Платформа и сервисы', n:'Яндекс.Облако', pub:'сервер платформы', s:'сервер платформы, оплата фондом напрямую', v:15000, on:true},
+    {id:'s3', k:'service', g:'Платформа и сервисы', n:'Claude Max', pub:'149 999 ₸ в месяц', s:'подписка Ефимчук · 149 999 ₸', v:28000, on:true},
+    {id:'s4', k:'service', g:'Платформа и сервисы', n:'Claude — вторая подписка', pub:'подписка', s:'подписка Калиты', v:12500, on:true},
+    {id:'s5', k:'service', g:'Платформа и сервисы', n:'амоЦРМ', pub:'годовая оплата + квартальный платёж', s:'годовая оплата 59 950 + квартальная 7 188', v:7008, on:true},
+    {id:'s6', k:'service', g:'Платформа и сервисы', n:'Wazzup', pub:'Telegram для отдела продаж', s:'Telegram для ОП', v:4000, on:true},
+    {id:'s7', k:'service', g:'Платформа и сервисы', n:'Google Workspace', pub:'20 $', s:'20 $', v:1640, on:true},
+    {id:'s8', k:'service', g:'Платформа и сервисы', n:'Запас на новые подписки', pub:'доводит статью до 210 000', s:'доводит статью до 210 000', v:18210, on:true},
+    {id:'a1', k:'admin', g:'Административные', n:'Юристы, бухгалтерия, дьюдил', pub:'норма · с июля только разовые оплаты', s:'норма · с июля только разовые оплаты', v:100000, on:true},
+    {id:'a2', k:'admin', g:'Административные', n:'Банковские комиссии', pub:'Консоль, Точка', s:'Консоль, Точка', v:10000, on:true},
+    {id:'a3', k:'admin', g:'Административные', n:'Услуги УК', pub:'платёж остановлен после июня', s:'платёж остановлен после июня', v:100000, on:false},
+    {id:'a4', k:'admin', g:'Административные', n:'Маркетинг и продукт — буфер', pub:'бюджет плана, факта с июня нет', s:'бюджет плана, факта с июня нет', v:71428, on:false},
   ],
   clients: [
-    {id:'c1', g:'pay', n:'Бражников — Лига Миров', s:'старый тариф 5 млн · трекер Гор', price:416667, trk:100000, on:true},
-    {id:'c2', g:'pay', n:'Лебедев — Дом Гирлянд', s:'6 млн · трекер Алёшин', price:500000, trk:100000, on:true},
-    {id:'c3', g:'pay', n:'Новик-Качан — BALORI', s:'помесячно · трекер Алёшин', price:500000, trk:100000, on:true},
-    {id:'c4', g:'pay', n:'Козырев — Система 10Х', s:'6 млн · трекер Алёшин', price:500000, trk:100000, on:true},
-    {id:'c5', g:'pay', n:'Косолапов — NOIMA', s:'помесячно · трекер Сабреев 80 000', price:500000, trk:80000, on:true},
-    {id:'c6', g:'pay', n:'Спирина — Диплодок', s:'помесячно · трекер не утверждён, стоит Алёшин', price:500000, trk:100000, on:true},
-    {id:'c8', g:'pay', n:'Островский — WELCS', s:'с августа · 500 000 на иностранное юрлицо, мимо рублёвой кассы · оплат ещё не было · трекер Алёшин, 3 встречи', price:500000, trk:75000, on:true, fx:true},
-    {id:'c7', g:'pay', n:'Бобрук — 144 Капитал', s:'старый тариф · трекер Гор · выходит в октябре', price:416667, trk:100000, on:false},
-    {id:'p1', g:'pipe', n:'Годуновы Денис и Дмитрий — Мебель Стайл', s:'комплектующие для мебели · ОП Ольга', price:500000, trk:100000, on:false},
-    {id:'p2', g:'pipe', n:'Бондаренко Алексей — Карета Мобилити', s:'ОП Ольга', price:500000, trk:100000, on:false},
-    {id:'p3', g:'pipe', n:'Алексеюк Елена — Sointera', s:'косметика для волос · ОП Ольга', price:500000, trk:100000, on:false},
-    {id:'p4', g:'pipe', n:'Скобеев Константин и партнёр', s:'SEO / SERM · ОП Сергей', price:500000, trk:100000, on:false},
+    {id:'c1', g:'pay', n:'Лига Миров', s:'Бражников · старый тариф 5 млн · трекер Гор', pub:'старый тариф 5 млн, квартальные платежи', price:416667, trk:100000, on:true},
+    {id:'c2', g:'pay', n:'Дом Гирлянд', s:'Лебедев · 6 млн · трекер Алёшин', pub:'6 млн, квартальные платежи', price:500000, trk:100000, on:true},
+    {id:'c3', g:'pay', n:'BALORI', s:'Новик-Качан · помесячно · трекер Алёшин', pub:'помесячно', price:500000, trk:100000, on:true},
+    {id:'c4', g:'pay', n:'Система 10Х', s:'Козырев · 6 млн · трекер Алёшин', pub:'6 млн, квартальные платежи', price:500000, trk:100000, on:true},
+    {id:'c5', g:'pay', n:'NOIMA', s:'Косолапов · помесячно · трекер Сабреев 80 000, меньше четырёх встреч — 20 000 за встречу', pub:'помесячно, с сентября', price:500000, trk:80000, on:true},
+    {id:'c6', g:'pay', n:'Диплодок', s:'Спирина · помесячно · трекер не утверждён, стоит Алёшин', pub:'помесячно, с сентября', price:500000, trk:100000, on:true},
+    {id:'c8', g:'pay', n:'WELCS', s:'Островский · с августа · 500 000 на иностранное юрлицо · оплат ещё не было · трекер Алёшин, 3 встречи', pub:'с августа · оплата на иностранное юрлицо · оплат ещё не было', price:500000, trk:75000, on:true, fx:true},
+    {id:'c7', g:'pay', n:'144 Капитал', s:'Бобрук · старый тариф · трекер Гор · выходит в октябре', pub:'старый тариф · выходит в октябре', price:416667, trk:100000, on:false},
+    {id:'p1', g:'pipe', n:'Мебель Стайл', s:'Денис и Дмитрий Годуновы · комплектующие для мебели · ОП Ольга', pub:'комплектующие для мебели', price:500000, trk:100000, on:false},
+    {id:'p2', g:'pipe', n:'Карета Мобилити', s:'Алексей Бондаренко · ОП Ольга', pub:'мобильность', price:500000, trk:100000, on:false},
+    {id:'p3', g:'pipe', n:'Sointera', s:'Елена Алексеюк · косметика для волос · ОП Ольга', pub:'косметика для волос', price:500000, trk:100000, on:false},
+    {id:'p4', g:'pipe', n:'SEO / SERM', s:'Константин Скобеев и партнёр · ОП Сергей', pub:'SEO / SERM', price:500000, trk:100000, on:false},
   ],
   port: [
-    {id:'f1', n:'Дубровин — Oazis, Рыбак, Напор', s:'трекинг по встречам · выплата сен за авг, состав не подтверждён', v:600000, on:true},
-    {id:'f3', n:'Боронина — компании без подписки', s:'Oazis, Рыбак, Напор · оценка 3 × 25 000', v:75000, on:true},
+    {id:'f1', n:'Дубровин — Oazis, Рыбак, Напор', pub:'Трекинг Oazis, Рыбак, Напор', s:'по встречам · выплата сентября за август, состав не подтверждён', v:600000, on:true},
   ],
 };
-const GROUPS_TEAM = ['Управление','Продажи и сервис','Платформа и сервисы','Административные'];
-const LS_KEY = 'fond_model_scenarios_v3';
+/*BASE_END*/
+
+const KIND = { person:'Команда', service:'Подписки и инфраструктура', admin:'Административные' };
+const GROUPS_DT = ['Управление', 'Продажи и сервис', 'Платформа и сервисы', 'Административные'];
+const LS_KEY = 'fond_model_scen_' + BUILD;
+const HUMANS = ['человек', 'человека', 'человек'];
+const CL = ['клиент', 'клиента', 'клиентов'];
 
 /* ═══════════ расчёт ═══════════ */
 function calcOf(s){
   const net = g => g / (1 + s.vat);
-  const netOf = c => c.fx ? c.price : net(c.price);   // валютный контур: НДС РФ не начисляется
-  const fixed = s.team.filter(t => t.on).reduce((a, t) => a + t.v, 0);
+  const netOf = c => c.fx ? c.price : net(c.price);          // валютный контур — без НДС РФ
+  const onT = s.team.filter(t => t.on);
+  const byK = { person:0, service:0, admin:0 };
+  onT.forEach(t => { byK[t.k] = (byK[t.k] || 0) + t.v; });
+  const people = onT.filter(t => t.k === 'person').reduce((a, t) => a + (t.people || 1), 0);
+  const fixed = byK.person + byK.service + byK.admin;
   const groups = {};
   s.team.forEach(t => { groups[t.g] = (groups[t.g] || 0) + (t.on ? t.v : 0); });
   const active = s.clients.filter(c => c.on);
   const payOn = active.filter(c => c.g === 'pay');
   const pipeOn = active.filter(c => c.g === 'pipe');
   const pipeOff = s.clients.filter(c => c.g === 'pipe' && !c.on);
-  const nPay = payOn.length, nPipe = pipeOn.length;
+  const nPipe = pipeOn.length;
   const nAll = active.length + s.newN;
   const revGross = active.reduce((a, c) => a + c.price, 0) + s.newN * s.price;
   const fxRev = active.filter(c => c.fx).reduce((a, c) => a + c.price, 0);
   const revNet = active.reduce((a, c) => a + netOf(c), 0) + s.newN * net(s.price);
   const trackers = active.reduce((a, c) => a + c.trk, 0) + s.newN * s.trk;
   const ck = nAll * s.ck;
-  const variable = trackers + ck;
+  const bi = s.bi.hours * s.bi.rate;
+  const variable = trackers + ck + bi;
   const contrib = revNet - variable;
   const accel = contrib - fixed;
-  const port = s.port.filter(p => p.on).reduce((a, p) => a + p.v, 0);
+  const portLines = s.port.filter(p => p.on).reduce((a, p) => a + p.v, 0);
+  const portCk = s.portCos * s.ck;
+  const port = portLines + portCk;
   const oper = accel - port;
   const decGross = s.mm.decTarget * s.mm.decPct / 100;
   const decContrib = net(decGross) - s.mm.decCost - decGross * s.mm.decComm;
@@ -406,13 +459,13 @@ function calcOf(s){
   const total = oper + mm;
   const afterTax = total > 0 ? total * (1 - s.tax) : total;
   const perNew = net(s.price) - s.trk - s.ck;
-  // сколько платящих нужно, чтобы результат слоя был ≥ 0: от текущего состава, каждый следующий — по тарифу нового клиента
+  // сколько платящих нужно, чтобы слой вышел в ноль: от текущего состава, каждый следующий — по тарифу нового
   const need = res => perNew > 0 ? Math.max(1, res >= 0 ? nAll - Math.floor(res / perNew) : nAll + Math.ceil(-res / perNew)) : null;
-  const posCore = need(accel), posOper = need(oper), posTotal = need(total);
+  const posCore = need(accel), posOper = need(oper);
   const gapCore = Math.max(0, posCore - nAll), gapOper = Math.max(0, posOper - nAll);
   const inflow = revNet + mm, outflow = variable + fixed + port;
-  return { fixed, groups, payOn, pipeOn, pipeOff, nPay, nPipe, nAll, revGross, fxRev, revNet, trackers, ck, variable, contrib, accel,
-           port, oper, decGross, decContrib, mmYear, mm, total, afterTax, perNew, posCore, posOper, posTotal, gapCore, gapOper, inflow, outflow };
+  return { byK, people, fixed, groups, payOn, pipeOn, pipeOff, nPipe, nAll, revGross, fxRev, revNet, trackers, ck, bi, variable, contrib,
+           accel, portLines, portCk, port, oper, decGross, decContrib, mmYear, mm, total, afterTax, perNew, posCore, posOper, gapCore, gapOper, inflow, outflow };
 }
 
 /* ═══════════ утилиты ═══════════ */
@@ -423,16 +476,17 @@ const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'
 const numIn = v => { const n = parseFloat(String(v).replace(/[\s ]/g, '').replace(',', '.').replace('−', '-')); return isNaN(n) ? 0 : n; };
 const uid = p => p + Math.random().toString(36).slice(2, 8);
 const plural = (n, f) => { const a = Math.abs(n) % 100, b = a % 10; return f[(a > 10 && a < 20) ? 2 : b === 1 ? 0 : (b >= 2 && b <= 4) ? 1 : 2]; };
-const CL = ['клиент', 'клиента', 'клиентов'];
 const tipAttr = (title, body) => ` data-tip-t="${esc(title)}" data-tip="${esc(body)}" tabindex="0"`;
 const qi = (title, body) => `<span class="qi"${tipAttr(title, body)} aria-label="Пояснение: ${esc(title)}">i</span>`;
-function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 1800); }
+const $ = id => document.getElementById(id);
+const toDetails = BUILD === 'full' ? ' · <button class="lnk" type="button" data-tab="dt">разбивка в «Деталях»</button>' : '';
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 1800); }
 
 let S = clone(BASE);
 const BASE_R = calcOf(BASE);
 let dirty = false;
 
-/* ═══════════ сценарии: локально + код ═══════════ */
+/* ═══════════ сценарии ═══════════ */
 function lsRead(){ try { const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
 function lsWrite(list){ try { localStorage.setItem(LS_KEY, JSON.stringify(list)); return true; } catch(e){ return false; } }
 function encodeState(st){ return btoa(unescape(encodeURIComponent(JSON.stringify(st)))); }
@@ -442,11 +496,13 @@ function decodeState(code){
     if (!st || !Array.isArray(st.team) || !Array.isArray(st.clients) || !Array.isArray(st.port)) return null;
     const out = Object.assign(clone(BASE), st);
     out.mm = Object.assign(clone(BASE.mm), st.mm || {});
+    out.bi = Object.assign(clone(BASE.bi), st.bi || {});
+    if (typeof out.portCos !== 'number') out.portCos = BASE.portCos;
     return out;
   } catch(e){ return null; }
 }
 function saveScenario(){
-  const inp = document.getElementById('scenName');
+  const inp = $('scenName');
   const name = inp.value.trim() || S.name || 'Без названия';
   S.name = name;
   const list = lsRead().filter(x => x.name !== name);
@@ -458,8 +514,7 @@ function saveScenario(){
 }
 let pendingDel = null;
 function renderList(){
-  const list = lsRead();
-  const box = document.getElementById('slist');
+  const list = lsRead(), box = $('slist');
   if (!list.length){ box.innerHTML = '<p class="note">Сохранённых сценариев пока нет. Измени ручки, впиши название и нажми «Сохранить».</p>'; return; }
   box.innerHTML = list.map((x, i) => `<div class="srow"><span class="nm">${esc(x.name)}</span><span class="dt">${esc(x.at)}</span>
     <button class="btn sm" type="button" data-open="${i}">Открыть</button>
@@ -475,32 +530,11 @@ function delScenario(i){
   const list = lsRead(); list.splice(i, 1); lsWrite(list); pendingDel = null; renderList(); toast('Удалено');
 }
 function copyText(txt, okMsg){
-  const fallback = () => { const ta = document.getElementById('importCode'); ta.value = txt; ta.focus(); ta.select(); toast('Скопируй выделенный текст вручную'); };
+  const fallback = () => { const ta = $('importCode'); ta.value = txt; ta.focus(); ta.select(); toast('Скопируй выделенный текст вручную'); };
   try { navigator.clipboard.writeText(txt).then(() => toast(okMsg), fallback); } catch(e){ fallback(); }
 }
 
-/* ═══════════ панель ═══════════ */
-function delta(now, base, fmt = Nf, lowerIsBetter = false){
-  if (now == null || base == null) return '';
-  const d = now - base; if (Math.abs(d) < 0.5) return 'как в базе';
-  const good = lowerIsBetter ? d < 0 : d > 0;
-  return `база ${fmt(base)} → <b class="${good ? 'up' : 'dn'}">${(d > 0 ? '+' : '−') + fmt(Math.abs(d))}</b>`;
-}
-function renderPanel(r){
-  const b = BASE_R;
-  document.getElementById('panel').innerHTML = `
-  <div class="gauges">
-    <div class="g main"><span class="kick cu">${r.total >= 0 ? 'Остаётся в месяц' : 'Не хватает в месяц'}${qi('Остаётся в месяц', 'Всё, что пришло за месяц, минус всё, что ушло: подписка без НДС, минус трекеры и ЦК, минус ядро, минус трекинг портфеля, плюс мастермайнды, если они включены. До налога на прибыль 25%.')}</span>
-      <div class="v">${Nf(r.total)} ₽</div>
-      <div class="d">${delta(r.total, b.total)}${r.total > 0 ? ` · после налога ${Nf(r.afterTax)}` : ''}</div>
-      <div class="sw" role="group" aria-label="Мастермайнды"><button type="button" class="${S.mm.on ? '' : 'on'}" data-mm="0">без ММ</button><button type="button" class="${S.mm.on ? 'on' : ''}" data-mm="1">с ММ</button></div></div>
-    <div class="g"><span class="kick">Акселерация${qi('Акселерация', 'Покрывает ли подписка команду. Выручка платящих без НДС минус трекеры и Центр компетенций минус ядро: команда, сервисы, административные. Портфель и мастермайнды сюда не входят.')}</span><div class="v">${Nf(r.accel)}</div><div class="d">подписка минус ядро<br>${delta(r.accel, b.accel)}</div></div>
-    <div class="g"><span class="kick">Платящих${qi('Платящих', 'Клиенты, которые в расчёте платят за акселерацию: текущие, включённые из заходящих и гипотетические новые. Тариф — с НДС в месяц; у Островского оплата на иностранное юрлицо, без НДС РФ.')}</span><div class="v">${r.nAll}</div><div class="d">${r.nPipe ? `в т.ч. ${r.nPipe} из заходящих · ` : ''}без НДС ${Nf(r.revNet)}<br>${delta(r.nAll, b.nAll, x => x)}</div></div>
-    <div class="g"><span class="kick">Нужно платящих${qi('Нужно платящих', 'Сколько платящих нужно, чтобы слой вышел в ноль. Первое число — чтобы подписка покрыла команду, второе — команду и трекинг портфеля. Считается от текущего состава: каждый следующий клиент — по тарифу нового.')}</span><div class="v">${r.posCore ?? '—'} / ${r.posOper ?? '—'}</div><div class="d">команда / команда + портфель<br>сейчас ${r.nAll}</div></div>
-    <div class="g"><span class="kick">Фикс ядра${qi('Фикс ядра', 'Расходы, которые не зависят от числа клиентов: команда, платформа и сервисы, административные. Трекеры и ЦК сюда не входят — они платятся за клиента.')}</span><div class="v">${Nf(r.fixed)}</div><div class="d">команда, сервисы, админ<br>${delta(r.fixed, b.fixed, Nf, true)}</div></div>
-  </div>`;
-}
-
+/* ═══════════ «Главное» ═══════════ */
 function renderHero(r){
   const n = r.nAll, pipeK = r.pipeOff.length;
   let head;
@@ -513,7 +547,6 @@ function renderHero(r){
   if (pipeK) facts.push(`На подписании ещё ${pipeK}: если зайдут все — <b>${n + pipeK}</b> платящих`);
   facts.push(S.mm.on ? `С мастермайндами месяц ${r.total >= 0 ? 'в плюсе' : 'в минусе'}: <b>${Nf(r.total)} ₽</b>` : `Мастермайнды не учтены — переключатель «с ММ» ниже`);
 
-  // лестница клиентов
   const ents = [];
   r.payOn.forEach(c => ents.push({ k:'paid', n:c.n, s:c.fx ? 'платит на иностранное юрлицо' : 'платит' }));
   r.pipeOn.forEach(c => ents.push({ k:'scen', n:c.n, s:'включён в сценарий' }));
@@ -526,155 +559,181 @@ function renderHero(r){
   g += `<line x1="${X(1)}" x2="${X(N)}" y1="${cy}" y2="${cy}" style="stroke:var(--line)" stroke-width="1"/>`;
   for (let i = 1; i <= N; i++){
     const e = ents[i - 1];
-    const cls = e ? 'ld-' + e.k : 'ld-empty';
-    const tt = e ? tipAttr(`${i}. ${e.n}`, e.s) : tipAttr(`Место ${i}`, 'Пока свободно. Каждый новый клиент по 500 000 в месяц добавляет ' + Nf(r.perNew) + ' ₽ после трекера и ЦК.');
-    g += `<circle class="${cls}" cx="${X(i)}" cy="${cy}" r="${R}"${tt}/>`;
-    g += `<text class="ld-n" x="${X(i)}" y="${cy + 4 + (i % 1)}" text-anchor="middle" dy="${R + 12}">${i}</text>`;
+    const tt = e ? tipAttr(`${i}. ${e.n}`, e.s) : tipAttr(`Место ${i}`, `Пока свободно. Каждый новый клиент по ${Nf(S.price)} в месяц добавляет ${Nf(r.perNew)} ₽ после сопровождения.`);
+    g += `<circle class="${e ? 'ld-' + e.k : 'ld-empty'}" cx="${X(i)}" cy="${cy}" r="${R}"${tt}/>`;
+    g += `<text class="ld-n" x="${X(i)}" y="${cy + R + 16}" text-anchor="middle">${i}</text>`;
   }
   const mark = (pos, top, label, cls, tip) => {
     if (pos == null) return '';
-    const x = X(Math.min(pos, N)) ;
-    const y1 = top ? 22 : cy + R + 17, y2 = top ? cy - R - 3 : H - 22;
+    const x = X(Math.min(pos, N));
+    const y1 = top ? 22 : cy + R + 19, y2 = top ? cy - R - 3 : H - 22;
     const ty = top ? 14 : H - 6;
     const anchor = x > W - 150 ? 'end' : x < 150 ? 'start' : 'middle';
     return `<g${tipAttr(label, tip)}><line class="${cls}" x1="${x}" x2="${x}" y1="${y1}" y2="${y2}"/><text class="ld-tl" x="${x}" y="${ty}" text-anchor="${anchor}">${label} · ${pos}</text></g>`;
   };
-  g += mark(r.posCore, true, 'Покрыть команду', 'ld-th', `С этим числом платящих подписка (без НДС, минус трекеры и ЦК) покрывает ядро: команду, сервисы и административные. Ядро — ${Nf(r.fixed)} ₽ в месяц.`);
-  g += mark(r.posOper, false, 'Покрыть команду и портфель', 'ld-th2', `Плюс трекинг компаний без подписки — Oazis, Рыбак, Напор: ${Nf(r.port)} ₽ в месяц. Мастермайнды в этом пороге не учтены.`);
+  g += mark(r.posCore, true, 'Покрыть команду', 'ld-th', `С этим числом платящих подписка — без НДС и после сопровождения клиентов — покрывает ядро: команду, подписки и административные. Ядро — ${Nf(r.fixed)} ₽ в месяц.`);
+  g += mark(r.posOper, false, 'Покрыть команду и портфель', 'ld-th2', `Плюс трекинг и сопровождение компаний без подписки — Oazis, Рыбак, Напор: ${Nf(r.port)} ₽ в месяц. Мастермайнды в этом пороге не учтены.`);
   g += '</svg>';
-
-  document.getElementById('hero').innerHTML = `
+  $('hero').innerHTML = `
     <div class="lead-k"><span class="kick cu">Главное</span><span class="kick">месяц · без НДС · до налога на прибыль</span></div>
     <h2>${head}</h2>
     <div class="facts">${facts.map(f => `<span>${f}</span>`).join('')}</div>
     <div class="ladder">${g}</div>
     <div class="keys">
-      <span><i class="kd paid"></i>платит</span>
-      <span><i class="kd sc"></i>добавлен в сценарии</span>
-      <span><i class="kd pipe"></i>на подписании, не включён</span>
-      <span><i class="kd empty"></i>свободное место</span>
-      <span><i class="kl"></i>порог: команда</span>
-      <span><i class="kl d"></i>порог: команда и портфель</span>
+      <span><i class="kd paid"></i>платит</span><span><i class="kd sc"></i>добавлен в сценарии</span>
+      <span><i class="kd pipe"></i>на подписании, не включён</span><span><i class="kd empty"></i>свободное место</span>
+      <span><i class="kl"></i>порог: команда</span><span><i class="kl d"></i>порог: команда и портфель</span>
     </div>`;
 }
 
+/* ═══════════ панель ═══════════ */
+function delta(now, base, fmt = Nf, lowerIsBetter = false){
+  if (now == null || base == null) return '';
+  const d = now - base; if (Math.abs(d) < 0.5) return 'как в базе';
+  const good = lowerIsBetter ? d < 0 : d > 0;
+  return `база ${fmt(base)} → <b class="${good ? 'up' : 'dn'}">${(d > 0 ? '+' : '−') + fmt(Math.abs(d))}</b>`;
+}
+function renderPanel(r){
+  const b = BASE_R;
+  $('panel').innerHTML = `
+  <div class="gauges">
+    <div class="g main"><span class="kick cu">${r.total >= 0 ? 'Остаётся в месяц' : 'Не хватает в месяц'}${qi('Остаётся в месяц', 'Подписка без НДС минус сопровождение клиентов, минус ядро, минус трекинг портфеля, плюс мастермайнды, если они включены. До налога на прибыль 25%.')}</span>
+      <div class="v">${Nf(r.total)} ₽</div>
+      <div class="d">${delta(r.total, b.total)}${r.total > 0 ? ` · после налога ${Nf(r.afterTax)}` : ''}</div>
+      <div class="sw" role="group" aria-label="Мастермайнды"><button type="button" class="${S.mm.on ? '' : 'on'}" data-mm="0">без ММ</button><button type="button" class="${S.mm.on ? 'on' : ''}" data-mm="1">с ММ</button></div></div>
+    <div class="g"><span class="kick">Акселерация${qi('Акселерация', 'Покрывает ли подписка команду. Выручка платящих без НДС минус сопровождение клиентов минус ядро. Портфель и мастермайнды сюда не входят.')}</span><div class="v">${Nf(r.accel)}</div><div class="d">подписка минус ядро<br>${delta(r.accel, b.accel)}</div></div>
+    <div class="g"><span class="kick">Платящих${qi('Платящих', 'Клиенты, которые в расчёте платят за акселерацию: текущие, включённые из заходящих и гипотетические новые.')}</span><div class="v">${r.nAll}</div><div class="d">${r.nPipe ? `в т.ч. ${r.nPipe} из заходящих · ` : ''}без НДС ${Nf(r.revNet)}<br>${delta(r.nAll, b.nAll, x => x)}</div></div>
+    <div class="g"><span class="kick">Нужно платящих${qi('Нужно платящих', 'Сколько платящих нужно, чтобы слой вышел в ноль. Первое число — подписка покрывает команду, второе — команду и портфель. Каждый следующий клиент — по тарифу нового.')}</span><div class="v">${r.posCore ?? '—'} / ${r.posOper ?? '—'}</div><div class="d">команда / команда + портфель<br>сейчас ${r.nAll}</div></div>
+    <div class="g"><span class="kick">Фикс ядра${qi('Фикс ядра', 'Расходы, которые не зависят от числа клиентов: команда, подписки и инфраструктура, административные.')}</span><div class="v">${Nf(r.fixed)}</div><div class="d">команда, подписки, админ<br>${delta(r.fixed, b.fixed, Nf, true)}</div></div>
+  </div>`;
+}
+
+/* ═══════════ деньги за месяц ═══════════ */
 function renderMoney(r){
   const inSegs = [
-    { c:'s-sub', t:'Подписка', v:r.revNet, tip:['Подписка без НДС', `${r.nAll} платящих. Тарифы с НДС ${Nf(r.revGross)} ₽ в месяц, без НДС ${Nf(r.revNet)} ₽.${r.fxRev ? ` Из них ${Nf(r.fxRev)} — оплата на иностранное юрлицо, мимо рублёвой кассы.` : ''} Квартальные платежи разложены по месяцам.`] },
+    { c:'s-sub', t:'Подписка', v:r.revNet, tip:['Подписка без НДС', `${r.nAll} платящих. Тарифы ${Nf(r.revGross)} ₽ в месяц, без НДС ${Nf(r.revNet)} ₽.${r.fxRev ? ` Из них ${Nf(r.fxRev)} — оплата на иностранное юрлицо, мимо рублёвой кассы.` : ''} Квартальные платежи разложены по месяцам.`] },
   ];
   if (S.mm.on) inSegs.push({ c:'s-mm', t:'Мастермайнды', v:r.mm, tip:['Мастермайнды, в среднем', `Два события в год, вклад делится на 12. Август по факту ${Nf(S.mm.aug)} ₽, декабрь по плану ${Nf(r.decContrib)} ₽ при сборе ${Nf(S.mm.decPct)}% цели. Деньги приходят дважды в год, не каждый месяц.`] });
   const outSegs = [
-    { c:'s-var', t:'Трекеры и ЦК', v:r.variable, tip:['Трекеры и Центр компетенций', `Платятся за каждого платящего клиента. Трекеры ${Nf(r.trackers)} ₽, ЦК ${Nf(r.ck)} ₽ (${Nf(S.ck)} × ${r.nAll}). Растут вместе с числом клиентов.`] },
-    { c:'s-core', t:'Ядро', v:r.fixed, tip:['Ядро', `Не зависит от числа клиентов. Команда ${Nf((r.groups['Управление']||0) + (r.groups['Продажи и сервис']||0))} ₽, платформа и сервисы ${Nf(r.groups['Платформа и сервисы']||0)} ₽, административные ${Nf(r.groups['Административные']||0)} ₽.`] },
-    { c:'s-port', t:'Портфель', v:r.port, tip:['Трекинг портфеля без подписки', `Компании на опционе и на сделке за акселерацию не платят, но мы их ведём. Это вложение в долю: ${Nf(r.port)} ₽ в месяц, ${Nf(r.port * 12)} ₽ в год.`] },
+    { c:'s-var', t:'Сопровождение', v:r.variable, tip:['Сопровождение клиентов', `Трекеры, Центр компетенций и бизнес-инженер по ${r.nAll} платящим. Растёт с каждым новым клиентом.`] },
+    { c:'s-core', t:'Ядро', v:r.fixed, tip:['Ядро', `Не зависит от числа клиентов. Команда (${r.people} ${plural(r.people, HUMANS)}) ${Nf(r.byK.person)} ₽, подписки и инфраструктура ${Nf(r.byK.service)} ₽, административные ${Nf(r.byK.admin)} ₽.`] },
+    { c:'s-port', t:'Портфель', v:r.port, tip:['Портфель без подписки', `Oazis на опционе, Рыбак и Напор на сделке: за акселерацию не платят, но мы их ведём. Это вложение в долю: ${Nf(r.port)} ₽ в месяц, ${Nf(r.port * 12)} ₽ в год.`] },
   ];
   const diff = r.inflow - r.outflow;
   const max = Math.max(r.inflow, r.outflow) || 1;
   if (diff > 0) outSegs.push({ c:'s-plus', t:'Остаётся', v:diff, tip:['Остаётся', `Приход больше расхода на ${Nf(diff)} ₽ в месяц до налога на прибыль. После налога 25% — ${Nf(diff * 0.75)} ₽.`] });
-  if (diff < 0) inSegs.push({ c:'s-minus', t:'Не хватает', v:-diff, tip:['Не хватает', `Расход больше прихода на ${Nf(-diff)} ₽ в месяц. Это закрывают ${Math.ceil(-diff / r.perNew)} ${plural(Math.ceil(-diff / r.perNew), CL)} по 500 000${S.mm.on ? '' : ' или мастермайнды'}.`] });
-  const bar = segs => segs.map(sg => `<div class="seg ${sg.c}" style="flex:0 0 ${(sg.v / max * 100).toFixed(3)}%"${tipAttr(sg.tip[0], sg.tip[1] + ' · ' + Nf(sg.v) + ' ₽')}><span class="t">${sg.t}</span><span class="v">${Mf(sg.v)} млн</span></div>`).join('');
+  if (diff < 0){ const k = Math.ceil(-diff / r.perNew); inSegs.push({ c:'s-minus', t:'Не хватает', v:-diff, tip:['Не хватает', `Расход больше прихода на ${Nf(-diff)} ₽ в месяц. Это закрывают ${k} ${plural(k, CL)} по ${Nf(S.price)}${S.mm.on ? '' : ' или мастермайнды'}.`] }); }
+  const bar = segs => segs.map(sg => `<div class="seg ${sg.c}" style="flex:0 0 ${(sg.v / max * 100).toFixed(3)}%"${tipAttr(sg.tip[0], sg.tip[1] + ' Всего ' + Nf(sg.v) + ' ₽.')}><span class="t">${sg.t}</span><span class="v">${Mf(sg.v)} млн</span></div>`).join('');
   const list = segs => segs.filter(sg => sg.c !== 's-plus' && sg.c !== 's-minus').map(sg => `<div><span>${sg.t}</span><b>${Nf(sg.v)}</b></div>`).join('');
-  document.getElementById('money').innerHTML = `
-    <div class="money-head"><h2>Деньги за месяц: что приходит и куда уходит${qi('Как читать', 'Две полосы в одном масштабе. Верхняя — что приходит, нижняя — что уходит. Если приход длиннее, разница — медный отрезок «остаётся». Если короче — пунктирный «не хватает». Наведи на любой отрезок, чтобы увидеть состав.')}</h2><span class="kick">₽ в месяц · без НДС · до налога</span></div>
+  $('money').innerHTML = `
+    <div class="money-head"><h2>Деньги за месяц: что приходит и куда уходит${qi('Как читать', 'Две полосы в одном масштабе. Верхняя — что приходит, нижняя — что уходит. Если приход длиннее, разница — медный отрезок «остаётся». Если короче — пунктирный «не хватает». Наведи на отрезок, чтобы увидеть состав.')}</h2><span class="kick">₽ в месяц · без НДС · до налога</span></div>
     <div class="mrow"><div class="lab">Приход<small>${S.mm.on ? 'подписка + ММ' : 'подписка'}</small></div><div class="bar">${bar(inSegs)}</div><div class="sum">${Nf(r.inflow)}</div></div>
-    <div class="mrow"><div class="lab">Расход<small>3 слоя</small></div><div class="bar">${bar(outSegs)}</div><div class="sum">${Nf(r.outflow)}</div></div>
+    <div class="mrow"><div class="lab">Расход<small>3 статьи</small></div><div class="bar">${bar(outSegs)}</div><div class="sum">${Nf(r.outflow)}</div></div>
     <div class="verdict"><span class="vt">${diff >= 0 ? 'Остаётся в месяц' : 'Не хватает в месяц'}${S.mm.on ? ', с мастермайндами' : ', без мастермайндов'}</span><span class="vv">${diff >= 0 ? '' : '−'}${Nf(Math.abs(diff))} ₽</span></div>
     <div class="mlist">${list(inSegs)}${list(outSegs)}</div>`;
 }
 
-function niceStep(raw){ const p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2.5 : m < 7.5 ? 5 : 10) * p; }
-
-/* ═══════════ ручки ═══════════ */
+/* ═══════════ строки ═══════════ */
 const tg = (on, act, cu, label) => `<button class="tg ${on ? 'on' : ''} ${cu ? 'cu' : ''}" type="button" aria-pressed="${on}" aria-label="${esc(label)}" data-act="${act}"></button>`;
-function addForm(key, fields){
-  return `<div class="add"><button class="btn sm" type="button" data-addtoggle="${key}">+ Добавить</button>
-    <div class="addform" id="af-${key}" hidden>
-      <input type="text" id="an-${key}" placeholder="${fields.name}">
-      ${fields.price ? `<input type="text" class="n" id="ap-${key}" placeholder="тариф / мес" value="${Nf(S.price)}">` : ''}
-      <input type="text" class="n" id="av-${key}" placeholder="${fields.val}">
-      <button class="btn sm" type="button" data-add="${key}">В сценарий</button>
+const rmBtn = (kind, id) => ` · <button class="rm" type="button" data-rm="${kind}:${id}">убрать</button>`;
+const flag = t => t.custom ? '<span class="flag">добавлено</span>' : '';
+function rowEdit(kind, it, pane, sub, field = 'v', unit = '₽ / мес'){
+  return `<div class="row ${it.on ? '' : 'off'}">${tg(it.on, kind + ':' + it.id, kind === 'port', it.n)}
+    <div style="min-width:0"><div class="nm">${esc(it.n)}${flag(it)}</div><div class="sub">${esc(sub || '')}${it.custom ? rmBtn(kind, it.id) : ''}</div></div>
+    <div><input type="text" id="${pane}-${kind}-${it.id}-${field}" value="${Nf(it[field])}" data-set="${kind}:${it.id}:${field}" aria-label="${esc(it.n)}: сумма"><div class="unit">${unit}</div></div></div>`;
+}
+function rowRO(name, subHtml, val, unit = '₽ / мес'){
+  return `<div class="row"><span class="dot"></span><div style="min-width:0"><div class="nm">${esc(name)}</div><div class="sub">${subHtml}</div></div><div class="rov">${Nf(val)}<div class="unit">${unit}</div></div></div>`;
+}
+function rowRate(name, sub, id, val, attr, unit){
+  return `<div class="row"><span class="dot"></span><div style="min-width:0"><div class="nm">${esc(name)}</div><div class="sub">${esc(sub)}</div></div><div><input type="text" id="${id}" value="${Nf(val)}" ${attr} aria-label="${esc(name)}"><div class="unit">${unit}</div></div></div>`;
+}
+function addForm(key, f){
+  const k = esc(key);
+  return `<div class="add"><button class="btn sm" type="button" data-addtoggle="${k}">+ Добавить</button>
+    <div class="addform" id="af-${k}" hidden>
+      <input type="text" id="an-${k}" placeholder="${esc(f.name)}" aria-label="${esc(f.name)}">
+      ${f.price ? `<input type="text" class="n" id="ap-${k}" placeholder="тариф / мес" value="${Nf(S.price)}" aria-label="Тариф в месяц">` : ''}
+      ${f.val ? `<input type="text" class="n" id="av-${k}" placeholder="${esc(f.val)}" aria-label="${esc(f.val)}">` : ''}
+      <button class="btn sm" type="button" data-add="${k}">В сценарий</button>
     </div></div>`;
 }
-function renderTeam(r){
-  const groups = [...new Set(GROUPS_TEAM.concat(S.team.map(t => t.g)))];
-  let h = `<h2>Ядро: команда и фикс</h2><div class="lead">Не зависит от числа клиентов. Круг закрашен — платим. Сумма в поле, подтверждение — Enter.</div>`;
-  groups.forEach(g => {
-    const items = S.team.filter(t => t.g === g);
-    h += `<div class="grp"><span class="kick"><span>${esc(g)}</span><span class="num">${Nf(r.groups[g] || 0)} ₽</span></span>`;
-    items.forEach(t => {
-      h += `<div class="row ${t.on ? '' : 'off'}">${tg(t.on, 'team:' + t.id, false, t.n)}
-        <div style="min-width:0"><div class="nm">${esc(t.n)}${t.custom ? '<span class="flag">добавлено</span>' : ''}</div><div class="sub">${esc(t.s)}${t.custom ? ` · <button class="rm" type="button" data-rm="team:${t.id}">убрать</button>` : ''}</div></div>
-        <div><input type="text" id="tv-${t.id}" value="${Nf(t.v)}" data-set="team:${t.id}:v" aria-label="Сумма в месяц"><div class="unit">₽ / мес</div></div></div>`;
-    });
-    h += addForm('team:' + g, { name:'Кто или что', val:'₽ / мес' }) + `</div>`;
+
+/* ═══════════ обзор: карточки ═══════════ */
+function renderExpOv(r){
+  const persons = S.team.filter(t => t.k === 'person');
+  const indiv = persons.filter(t => !t.agg && !t.custom), indivOn = indiv.filter(t => t.on);
+  let h = `<h2>Ядро: команда и фикс</h2><div class="lead">Не зависит от числа клиентов. Круг закрашен — в расчёте.</div>`;
+  h += `<div class="grp"><span class="kick"><span>Команда · ${r.people} ${plural(r.people, HUMANS)}</span><span class="num">${Nf(r.byK.person)} ₽</span></span>`;
+  if (indiv.length) h += rowRO('Команда', `${indivOn.length} ${plural(indivOn.length, HUMANS)} · начислением, с налогами${toDetails}`, indivOn.reduce((a, t) => a + t.v, 0));
+  persons.filter(t => t.agg || t.custom).forEach(t => { h += rowEdit('team', t, 'o', t.pub || t.s); });
+  h += addForm('o|team|person|Новые роли', { name:'Роль, например «трекер»', val:'₽ / мес' }) + `</div>`;
+  ['service', 'admin'].forEach(k => {
+    h += `<div class="grp"><span class="kick"><span>${KIND[k]}</span><span class="num">${Nf(r.byK[k])} ₽</span></span>`;
+    S.team.filter(t => t.k === k).forEach(t => { h += rowEdit('team', t, 'o', t.pub ?? t.s); });
+    h += addForm(`o|team|${k}|${k === 'service' ? 'Платформа и сервисы' : 'Административные'}`, { name:'Что', val:'₽ / мес' }) + `</div>`;
   });
   h += `<div class="tot"><span>Фикс ядра в месяц</span><b>${Nf(r.fixed)} ₽</b></div>`;
-  document.getElementById('teamCard').innerHTML = h;
+  $('expOv').innerHTML = h;
 }
-function clientRows(list){
-  return list.map(c => `<div class="row cl ${c.on ? '' : 'off'}">${tg(c.on, 'client:' + c.id, c.g === 'pipe', c.n)}
-    <div style="min-width:0"><div class="nm">${esc(c.n)}${c.custom ? '<span class="flag">добавлено</span>' : ''}</div><div class="sub">${esc(c.s)}${c.custom ? ` · <button class="rm" type="button" data-rm="client:${c.id}">убрать</button>` : ''}</div></div>
-    <div><input type="text" id="cp-${c.id}" value="${Nf(c.price)}" data-set="client:${c.id}:price" aria-label="Тариф в месяц"><div class="unit">тариф / мес</div></div>
-    <div><input type="text" id="ct-${c.id}" value="${Nf(c.trk)}" data-set="client:${c.id}:trk" aria-label="Ставка трекера"><div class="unit">трекер</div></div></div>`).join('');
+function cliRowOv(c){
+  return `<div class="row ${c.on ? '' : 'off'}">${tg(c.on, 'client:' + c.id, c.g === 'pipe', c.n)}
+    <div style="min-width:0"><div class="nm">${esc(c.n)}${c.fx ? '<span class="flag">вал. контур</span>' : ''}${flag(c)}</div><div class="sub">${esc(c.pub ?? '')}${c.custom ? rmBtn('client', c.id) : ''}</div></div>
+    <div><input type="text" id="o-client-${c.id}-price" value="${Nf(c.price)}" data-set="client:${c.id}:price" aria-label="${esc(c.n)}: тариф"><div class="unit">тариф / мес</div></div></div>`;
 }
-function renderClients(r){
+function renderCliOv(r){
   const pay = S.clients.filter(c => c.g === 'pay'), pipe = S.clients.filter(c => c.g === 'pipe');
-  let h = `<h2>Подписка: платящие клиенты</h2><div class="lead">Тариф с НДС в месяц. Вклад клиента = тариф без НДС − трекер − ЦК ${Nf(S.ck)}.</div>
-  <div class="grp"><span class="kick"><span>Платят сейчас</span><span>${pay.filter(c => c.on).length} в расчёте</span></span>${clientRows(pay)}${addForm('client:pay', { name:'Клиент — компания', val:'трекер ₽', price:true })}</div>
-  <div class="grp"><span class="kick"><span>Заходят после ММ · на подписании</span><span>${pipe.filter(c => c.on).length} из ${pipe.length} включено</span></span>${clientRows(pipe)}${addForm('client:pipe', { name:'Клиент — компания', val:'трекер ₽', price:true })}</div>
+  $('cliOv').innerHTML = `<h2>Подписка: платящие клиенты</h2><div class="lead">Тариф с НДС в месяц. Круг закрашен — платит в расчёте.</div>
+  <div class="grp"><span class="kick"><span>Платят сейчас</span><span>${pay.filter(c => c.on).length} в расчёте</span></span>${pay.map(cliRowOv).join('')}${addForm('o|client|pay', { name:'Клиент', price:true })}</div>
+  <div class="grp"><span class="kick"><span>Заходят после ММ · на подписании</span><span>${pipe.filter(c => c.on).length} из ${pipe.length} включено</span></span>${pipe.map(cliRowOv).join('')}${addForm('o|client|pipe', { name:'Клиент', price:true })}</div>
   <div class="grp"><span class="kick"><span>Гипотеза сверх названных</span><span>${Nf(r.perNew)} ₽ вклада каждый</span></span>
-    <div class="counter"><div><div class="nm" style="font-size:13px;font-weight:500">Новых клиентов по ${Nf(S.price)} в месяц</div><div class="sub note">трекер ${Nf(S.trk)} и ЦК ${Nf(S.ck)} по ставкам ниже</div></div>
-      <div class="pm"><button type="button" data-step="-1" aria-label="Минус клиент">−</button><b>${S.newN}</b><button type="button" data-step="1" aria-label="Плюс клиент">+</button></div></div></div>
-  <div class="grp"><span class="kick"><span>Ставки по умолчанию</span><span></span></span>
-    <div class="row"><span class="dot"></span><div><div class="nm">Тариф нового клиента</div><div class="sub">с НДС в месяц</div></div><div><input type="text" id="r-price" value="${Nf(S.price)}" data-rate="price" aria-label="Тариф нового клиента"><div class="unit">₽ / мес</div></div></div>
-    <div class="row"><span class="dot"></span><div><div class="nm">Трекер</div><div class="sub">4–5 встреч; меньше четырёх — 25 000 за встречу</div></div><div><input type="text" id="r-trk" value="${Nf(S.trk)}" data-rate="trk" aria-label="Ставка трекера"><div class="unit">₽ / клиент</div></div></div>
-    <div class="row"><span class="dot"></span><div><div class="nm">Боронина — Центр компетенций</div><div class="sub">за каждого платящего клиента, фикса нет</div></div><div><input type="text" id="r-ck" value="${Nf(S.ck)}" data-rate="ck" aria-label="Ставка ЦК"><div class="unit">₽ / клиент</div></div></div>
+    <div class="counter"><div><div class="nm" style="font-size:13px;font-weight:500">Новых клиентов по ${Nf(S.price)} в месяц</div><div class="sub note">вклад — тариф без НДС минус сопровождение</div></div>
+      <div class="pm"><button type="button" data-step="-1" aria-label="Минус клиент">−</button><b>${S.newN}</b><button type="button" data-step="1" aria-label="Плюс клиент">+</button></div></div>
+    ${rowRate('Тариф нового клиента', 'с НДС в месяц', 'o-rate-price', S.price, 'data-rate="price"', '₽ / мес')}
   </div>
+  <div class="grp"><span class="kick"><span>Сопровождение клиентов</span><span class="num">−${Nf(r.variable)} ₽</span></span>
+    ${rowRO('Трекеры, Центр компетенций, бизнес-инженер', `за каждого платящего — растёт вместе с клиентами${toDetails}`, r.variable)}</div>
   <div class="tot"><span>Вклад подписки · ${r.nAll} платящих</span><b>${Nf(r.contrib)} ₽</b></div>`;
-  document.getElementById('clientCard').innerHTML = h;
 }
-function renderPort(r){
-  let h = `<h2>Портфель: трекинг без подписки</h2><div class="lead">Компании на опционе и на сделке за акселерацию не платят, но мы их ведём. Это инвестиция в долю, а не расход акселерации.</div><div class="grp">`;
-  S.port.forEach(p => {
-    h += `<div class="row ${p.on ? '' : 'off'}">${tg(p.on, 'port:' + p.id, true, p.n)}
-      <div style="min-width:0"><div class="nm">${esc(p.n)}${p.custom ? '<span class="flag">добавлено</span>' : ''}</div><div class="sub">${esc(p.s)}${p.custom ? ` · <button class="rm" type="button" data-rm="port:${p.id}">убрать</button>` : ''}</div></div>
-      <div><input type="text" id="pv-${p.id}" value="${Nf(p.v)}" data-set="port:${p.id}:v" aria-label="Сумма в месяц"><div class="unit">₽ / мес</div></div></div>`;
-  });
-  h += addForm('port', { name:'Компания или кто ведёт', val:'₽ / мес' }) + `</div>
+function renderPortOv(r){
+  const indiv = S.port.filter(p => !p.agg && !p.custom), indivSum = indiv.filter(p => p.on).reduce((a, p) => a + p.v, 0);
+  let h = `<h2>Портфель: трекинг без подписки</h2><div class="lead">Компании на опционе и на сделке за акселерацию не платят, но мы их ведём. Это вложение в долю, а не расход акселерации.</div>
+    <div class="ctx"><b>Oazis Estate</b> — опцион 25% · <b>Рыбак Всемогущий</b> и <b>АО Напор</b> — сделка, подписание до 20.10</div><div class="grp">`;
+  if (indiv.length || S.portCos) h += rowRO('Трекинг и сопровождение', `${S.portCos || indiv.length} ${plural(S.portCos || indiv.length, ['компания', 'компании', 'компаний'])} без подписки${toDetails}`, indivSum + r.portCk);
+  S.port.filter(p => p.agg || p.custom).forEach(p => { h += rowEdit('port', p, 'o', p.pub ?? p.s); });
+  h += addForm('o|port', { name:'Компания', val:'₽ / мес' }) + `</div>
   <div class="tot"><span>Портфель в месяц · ${Nf(r.port * 12)} в год</span><b>${Nf(r.port)} ₽</b></div>`;
-  document.getElementById('portCard').innerHTML = h;
+  $('portOv').innerHTML = h;
 }
 function renderMM(r){
   const m = S.mm;
-  document.getElementById('mmCard').innerHTML = `<h2>Мастермайнды</h2><div class="lead">Два события в год. В месяц — их вклад, делённый на 12. Включается переключателем «с ММ» в панели.</div>
+  $('mmCard').innerHTML = `<h2>Мастермайнды</h2><div class="lead">Два события в год. В месяц — их вклад, делённый на 12. Включается переключателем «с ММ» в панели.</div>
   <div class="grp">
-    <div class="row"><span class="dot"></span><div><div class="nm">Август — факт</div><div class="sub">выручка без НДС минус прямые расходы</div></div><div><input type="text" id="m-aug" value="${Nf(m.aug)}" data-mm-set="aug" aria-label="Вклад августа"><div class="unit">₽ за событие</div></div></div>
-    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — цель с НДС</div><div class="sub">Анталья, 07–13.12</div></div><div><input type="text" id="m-dt" value="${Nf(m.decTarget)}" data-mm-set="decTarget" aria-label="Цель декабря"><div class="unit">₽</div></div></div>
-    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — сбор цели</div><div class="sub">на 01.10 с учётом счетов — около 18%</div></div><div><input type="text" id="m-dp" value="${Nf(m.decPct)}" data-mm-set="decPct" aria-label="Процент сбора"><div class="unit">% цели</div></div></div>
-    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — смета</div><div class="sub">расходы события, без комиссий</div></div><div><input type="text" id="m-dc" value="${Nf(m.decCost)}" data-mm-set="decCost" aria-label="Смета декабря"><div class="unit">₽</div></div></div>
-    <div class="row"><span class="dot"></span><div><div class="nm">Декабрь — комиссии</div><div class="sub">доля от выручки с НДС, с запасом</div></div><div><input type="text" id="m-dm" value="${Nf(m.decComm * 100)}" data-mm-set="decComm" aria-label="Комиссии декабря"><div class="unit">%</div></div></div>
+    ${rowRate('Август — факт', 'выручка без НДС минус прямые расходы', 'm-aug', m.aug, 'data-mm-set="aug"', '₽ за событие')}
+    ${rowRate('Декабрь — цель с НДС', 'Анталья, 07–13.12', 'm-dt', m.decTarget, 'data-mm-set="decTarget"', '₽')}
+    ${rowRate('Декабрь — сбор цели', 'на 01.10 с учётом счетов — около 18%', 'm-dp', m.decPct, 'data-mm-set="decPct"', '% цели')}
+    ${rowRate('Декабрь — смета', 'расходы события, без комиссий', 'm-dc', m.decCost, 'data-mm-set="decCost"', '₽')}
+    ${rowRate('Декабрь — комиссии', 'доля от выручки с НДС, с запасом', 'm-dm', m.decComm * 100, 'data-mm-set="decComm"', '%')}
   </div>
   <div class="tot"><span>Декабрь ${Nf(r.decContrib)} · за год ${Nf(r.mmYear)}</span><b>${Nf(r.mmYear / 12)} ₽ / мес</b></div>`;
 }
-
-/* ═══════════ ведомость и кривая ═══════════ */
-function renderLedger(r){
+function renderLedgerOv(r){
   const L = (a, b, sub, cls = '') => `<tr class="${cls}"><td>${a}${sub ? `<span class="sub">${sub}</span>` : ''}</td><td class="a">${b}</td></tr>`;
-  document.getElementById('ledger').innerHTML = `<table class="ledger">
+  $('ledgerOv').innerHTML = `<table class="ledger">
     ${L('Выручка акселерации без НДС', Nf(r.revNet), `${r.nAll} платящих · ${Nf(r.revGross)} по тарифам${r.fxRev ? ` · в т.ч. ${Nf(r.fxRev)} на иностранное юрлицо, без НДС РФ` : ''}`)}
-    ${L('Трекеры', '−' + Nf(r.trackers))}
-    ${L('Центр компетенций', '−' + Nf(r.ck), `${Nf(S.ck)} × ${r.nAll}`)}
+    ${L('Сопровождение клиентов', '−' + Nf(r.variable), 'трекеры, Центр компетенций, бизнес-инженер')}
     ${L('Вклад подписки', Nf(r.contrib), '', 'sum')}
-    ${L('Ядро: команда, сервисы, административные', '−' + Nf(r.fixed))}
+    ${L('Ядро', '−' + Nf(r.fixed), `команда ${Nf(r.byK.person)} · подписки и инфраструктура ${Nf(r.byK.service)} · административные ${Nf(r.byK.admin)}`)}
     ${L('Результат акселерации', Nf(r.accel), '', 'sum')}
-    ${L('Портфель: трекинг компаний без подписки', '−' + Nf(r.port))}
+    ${L('Портфель: трекинг и сопровождение без подписки', '−' + Nf(r.port))}
     ${L('Операционный результат', Nf(r.oper), 'без мастермайндов', 'sum')}
     ${L('Мастермайнды, в среднем в месяц', S.mm.on ? '+' + Nf(r.mm) : '0', S.mm.on ? `август ${Nf(S.mm.aug)} + декабрь ${Nf(r.decContrib)}, ÷ 12` : 'выключены')}
     ${L('Остаётся в месяц', Nf(r.total), 'до налога на прибыль', 'sum')}
     ${L('После налога на прибыль 25%', Nf(r.afterTax))}
-    ${L('Вклад одного нового клиента', Nf(r.perNew), `${Nf(S.price)} без НДС минус трекер ${Nf(S.trk)} и ЦК ${Nf(S.ck)}`)}
+    ${L('Вклад одного нового клиента', Nf(r.perNew), `${Nf(S.price)} без НДС минус сопровождение`)}
   </table>`;
 }
+function niceStep(raw){ const p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2.5 : m < 7.5 ? 5 : 10) * p; }
 function renderCurve(r){
   const N = Math.max(16, r.nAll + 4);
   const at = (res, n) => res + (n - r.nAll) * r.perNew;
@@ -694,70 +753,145 @@ function renderCurve(r){
   s += line(core, '', 2, 'var(--petrol)') + line(full, '5 4', 1.5, 'var(--petrol)');
   if (S.mm.on) s += line(withMM, '1.5 3', 1.75, 'var(--copper)');
   [[r.posCore, 'КОМАНДА'], [r.posOper, 'С ПОРТФЕЛЕМ']].forEach(([b, t]) => { if (b != null && b <= N){ s += `<circle cx="${X(b)}" cy="${Y(0)}" r="4.5" style="fill:var(--card);stroke:var(--petrol)" stroke-width="1.5"/><text class="wf-t" x="${X(b)}" y="${Y(0) + 16}" text-anchor="middle">${t} · ${b}</text>`; } });
-  s += `<circle cx="${X(r.nAll)}" cy="${Y(S.mm.on ? r.total : r.oper)}" r="5.5" style="fill:var(--copper)"/><text class="wf-t" x="${X(r.nAll) + 9}" y="${Y(S.mm.on ? r.total : r.oper) - 6}" style="fill:var(--copper)">СЕЙЧАС · ${r.nAll}</text>`;
-  s += `</svg></div><p class="note" style="margin-top:6px">Сплошная линия — подписка против ядра, пунктир — после трекинга портфеля${S.mm.on ? ', медная точечная — с мастермайндами' : ''}. Линии идут от текущего состава клиентов: каждый следующий — по ${Nf(S.price)} в месяц и даёт ${Nf(r.perNew)} ₽. Кольца — пороги из блока «Главное».</p>`;
-  document.getElementById('curve').innerHTML = s;
+  const yNow = S.mm.on ? r.total : r.oper;
+  s += `<circle cx="${X(r.nAll)}" cy="${Y(yNow)}" r="5.5" style="fill:var(--copper)"/><text class="wf-t" x="${X(r.nAll) + 9}" y="${Y(yNow) - 6}" style="fill:var(--copper)">СЕЙЧАС · ${r.nAll}</text>`;
+  s += `</svg></div><p class="note" style="margin-top:6px">Сплошная линия — подписка против ядра, пунктир — после портфеля${S.mm.on ? ', медная точечная — с мастермайндами' : ''}. Линии идут от текущего состава: каждый следующий клиент — по ${Nf(S.price)} в месяц и даёт ${Nf(r.perNew)} ₽. Кольца — пороги из блока «Главное».</p>`;
+  $('curve').innerHTML = s;
 }
 
+/*DTJS_START*/
+/* ═══════════ детали ═══════════ */
+const kindOfGroup = g => g === 'Административные' ? 'admin' : g === 'Платформа и сервисы' ? 'service' : 'person';
+function renderTeamDt(r){
+  const groups = [...new Set(GROUPS_DT.concat(S.team.map(t => t.g)))];
+  let h = `<h2>Ядро по людям и позициям</h2><div class="lead">Суммы начислением, с налогом. Подтверждение — Enter.</div>`;
+  groups.forEach(g => {
+    const items = S.team.filter(t => t.g === g);
+    h += `<div class="grp"><span class="kick"><span>${esc(g)}</span><span class="num">${Nf(r.groups[g] || 0)} ₽</span></span>`;
+    items.forEach(t => { h += rowEdit('team', t, 'd', t.s); });
+    h += addForm(`d|team|${kindOfGroup(g)}|${g}`, { name:'Кто или что', val:'₽ / мес' }) + `</div>`;
+  });
+  h += `<div class="tot"><span>Фикс ядра в месяц</span><b>${Nf(r.fixed)} ₽</b></div>`;
+  $('teamDt').innerHTML = h;
+}
+function cliRowDt(c){
+  return `<div class="row cl ${c.on ? '' : 'off'}">${tg(c.on, 'client:' + c.id, c.g === 'pipe', c.n)}
+    <div style="min-width:0"><div class="nm">${esc(c.n)}${flag(c)}</div><div class="sub">${esc(c.s ?? c.pub ?? '')}${c.custom ? rmBtn('client', c.id) : ''}</div></div>
+    <div><input type="text" id="d-client-${c.id}-price" value="${Nf(c.price)}" data-set="client:${c.id}:price" aria-label="${esc(c.n)}: тариф"><div class="unit">тариф / мес</div></div>
+    <div><input type="text" id="d-client-${c.id}-trk" value="${Nf(c.trk)}" data-set="client:${c.id}:trk" aria-label="${esc(c.n)}: трекер"><div class="unit">трекер</div></div></div>`;
+}
+function renderCliDt(r){
+  const pay = S.clients.filter(c => c.g === 'pay'), pipe = S.clients.filter(c => c.g === 'pipe');
+  $('cliDt').innerHTML = `<h2>Клиенты: тариф и трекер</h2><div class="lead">Трекер — ставка в месяц за клиента.</div>
+  <div class="grp"><span class="kick"><span>Платят</span><span>трекеры ${Nf(r.trackers)} ₽</span></span>${pay.map(cliRowDt).join('')}${addForm('d|client|pay', { name:'Клиент', price:true, val:'трекер ₽' })}</div>
+  <div class="grp"><span class="kick"><span>Заходят после ММ</span><span></span></span>${pipe.map(cliRowDt).join('')}${addForm('d|client|pipe', { name:'Клиент', price:true, val:'трекер ₽' })}</div>`;
+}
+function renderRatesDt(r){
+  $('ratesDt').innerHTML = `<h2>Ставки сопровождения</h2><div class="lead">Для новых клиентов и Центра компетенций.</div><div class="grp">
+    ${rowRate('Трекер нового клиента', '4–5 встреч; меньше четырёх — 25 000 за встречу', 'd-rate-trk', S.trk, 'data-rate="trk"', '₽ / клиент')}
+    ${rowRate('Боронина — Центр компетенций', 'за каждую компанию портфеля, налог внутри', 'd-rate-ck', S.ck, 'data-rate="ck"', '₽ / компания')}
+    ${rowRate('Бизнес-инженер — часов', 'до 10 часов в месяц, в счёте Борониной', 'd-bi-h', S.bi.hours, 'data-bi="hours"', 'ч / мес')}
+    ${rowRate('Бизнес-инженер — ставка', 'за час', 'd-bi-r', S.bi.rate, 'data-bi="rate"', '₽ / ч')}
+  </div>
+  <div class="tot"><span>ЦК ${Nf(r.ck)} + БИ ${Nf(r.bi)} по платящим</span><b>${Nf(r.ck + r.bi)} ₽</b></div>`;
+}
+function renderPortDt(r){
+  let h = `<h2>Портфель по людям</h2><div class="lead">Трекинг компаний без подписки и Центр компетенций по ним.</div><div class="grp">`;
+  S.port.forEach(p => { h += rowEdit('port', p, 'd', p.s); });
+  h += rowRate('Центр компетенций — компаний без подписки', `× ${Nf(S.ck)} = ${Nf(r.portCk)} ₽`, 'd-rate-portCos', S.portCos, 'data-rate="portCos"', 'компаний');
+  h += addForm('d|port', { name:'Кто и какая компания', val:'₽ / мес' }) + `</div>
+  <div class="tot"><span>Портфель в месяц</span><b>${Nf(r.port)} ₽</b></div>`;
+  $('portDt').innerHTML = h;
+}
+function renderLedgerDt(r){
+  const L = (a, b, sub, cls = '') => `<tr class="${cls}"><td>${a}${sub ? `<span class="sub">${sub}</span>` : ''}</td><td class="a">${b}</td></tr>`;
+  const grp = GROUPS_DT.concat(Object.keys(r.groups).filter(g => !GROUPS_DT.includes(g))).filter(g => r.groups[g]).map(g => `${esc(g)} ${Nf(r.groups[g])}`).join(' · ');
+  $('ledgerDt').innerHTML = `<table class="ledger">
+    ${L('Выручка акселерации без НДС', Nf(r.revNet), `${r.nAll} платящих`)}
+    ${L('Трекеры', '−' + Nf(r.trackers))}
+    ${L('Центр компетенций по платящим', '−' + Nf(r.ck), `${Nf(S.ck)} × ${r.nAll}`)}
+    ${L('Бизнес-инженер', '−' + Nf(r.bi), `${Nf(S.bi.hours)} ч × ${Nf(S.bi.rate)}`)}
+    ${L('Вклад подписки', Nf(r.contrib), '', 'sum')}
+    ${L('Ядро', '−' + Nf(r.fixed), grp)}
+    ${L('Результат акселерации', Nf(r.accel), '', 'sum')}
+    ${L('Портфель: трекинг', '−' + Nf(r.portLines))}
+    ${L('Портфель: Центр компетенций', '−' + Nf(r.portCk), `${Nf(S.ck)} × ${S.portCos}`)}
+    ${L('Операционный результат', Nf(r.oper), 'без мастермайндов', 'sum')}
+    ${L('Мастермайнды, в среднем в месяц', S.mm.on ? '+' + Nf(r.mm) : '0')}
+    ${L('Остаётся в месяц', Nf(r.total), 'до налога на прибыль', 'sum')}
+  </table>`;
+}
+
+/*DTJS_END*/
 /* ═══════════ рендер и действия ═══════════ */
 function render(){
   const r = calcOf(S);
-  renderHero(r); renderPanel(r); renderMoney(r); renderTeam(r); renderClients(r); renderPort(r); renderMM(r); renderLedger(r); renderCurve(r); renderList();
-  document.getElementById('curName').textContent = S.name || 'Без названия';
-  document.getElementById('curState').textContent = dirty ? '· изменён, не сохранён' : '';
+  renderHero(r); renderPanel(r); renderMoney(r); renderExpOv(r); renderCliOv(r); renderPortOv(r); renderMM(r); renderLedgerOv(r); renderCurve(r);
+  if ($('pane-dt')){ renderTeamDt(r); renderCliDt(r); renderRatesDt(r); renderPortDt(r); renderLedgerDt(r); }
+  renderList();
+  $('curName').textContent = S.name || 'Без названия';
+  $('curState').textContent = dirty ? '· изменён, не сохранён' : '';
 }
 function touch(){ dirty = true; render(); }
 function find(kind, id){ return (kind === 'team' ? S.team : kind === 'client' ? S.clients : S.port).find(x => x.id === id); }
-
+function setTab(t){
+  if (!$('pane-dt')) return;
+  $('pane-ov').hidden = t !== 'ov'; $('pane-dt').hidden = t !== 'dt';
+  $('tab-ov').classList.toggle('on', t === 'ov'); $('tab-dt').classList.toggle('on', t === 'dt');
+  $('tab-ov').setAttribute('aria-selected', String(t === 'ov')); $('tab-dt').setAttribute('aria-selected', String(t === 'dt'));
+  window.scrollTo({ top: $('pane-' + t).offsetTop - 60 });
+}
 document.addEventListener('click', e => {
   const el = e.target.closest('button'); if (!el) return;
   const d = el.dataset;
+  if (d.tab){ setTab(d.tab); return; }
   if (d.act){ const [k, id] = d.act.split(':'); const it = find(k, id); if (it){ it.on = !it.on; touch(); } return; }
   if (d.rm){ const [k, id] = d.rm.split(':'); const arr = k === 'team' ? S.team : k === 'client' ? S.clients : S.port; const i = arr.findIndex(x => x.id === id); if (i >= 0){ arr.splice(i, 1); touch(); } return; }
   if (d.mm != null){ S.mm.on = d.mm === '1'; touch(); return; }
   if (d.step){ S.newN = Math.max(0, Math.min(30, S.newN + Number(d.step))); touch(); return; }
-  if (d.addtoggle){ const f = document.getElementById('af-' + d.addtoggle); f.hidden = !f.hidden; if (!f.hidden) document.getElementById('an-' + d.addtoggle).focus(); return; }
+  if (d.addtoggle){ const f = $('af-' + d.addtoggle); f.hidden = !f.hidden; if (!f.hidden) $('an-' + d.addtoggle).focus(); return; }
   if (d.add){ doAdd(d.add); return; }
   if (d.open != null){ openScenario(Number(d.open)); return; }
   if (d.del != null){ delScenario(Number(d.del)); return; }
 });
 function doAdd(key){
-  const name = document.getElementById('an-' + key).value.trim();
-  const val = numIn(document.getElementById('av-' + key).value);
-  if (!name){ document.getElementById('an-' + key).focus(); return; }
-  const [kind, grp] = key.split(':');
-  if (kind === 'team') S.team.push({ id: uid('t'), g: grp, n: name, s: 'добавлено в сценарии', v: val, on: true, custom: true });
-  if (kind === 'port') S.port.push({ id: uid('f'), n: name, s: 'добавлено в сценарии', v: val, on: true, custom: true });
-  if (kind === 'client'){ const price = numIn(document.getElementById('ap-' + key).value) || S.price; S.clients.push({ id: uid('c'), g: grp, n: name, s: 'добавлено в сценарии', price, trk: val || S.trk, on: true, custom: true }); }
+  const nameEl = $('an-' + key), valEl = $('av-' + key), priceEl = $('ap-' + key);
+  const name = nameEl.value.trim();
+  if (!name){ nameEl.focus(); return; }
+  const val = valEl ? numIn(valEl.value) : 0;
+  const [, kind, a, b] = key.split('|');
+  if (kind === 'team') S.team.push({ id: uid('t'), k: a, g: b, n: name, s: 'добавлено в сценарии', pub: 'добавлено в сценарии', v: val, on: true, custom: true });
+  if (kind === 'port') S.port.push({ id: uid('f'), n: name, pub: name, s: 'добавлено в сценарии', v: val, on: true, custom: true });
+  if (kind === 'client') S.clients.push({ id: uid('c'), g: a, n: name, s: 'добавлено в сценарии', pub: 'добавлено в сценарии', price: priceEl ? (numIn(priceEl.value) || S.price) : S.price, trk: val || S.trk, on: true, custom: true });
   touch();
 }
 document.addEventListener('change', e => {
-  const el = e.target; const d = el.dataset;
+  const el = e.target, d = el.dataset;
   if (d.set){ const [k, id, f] = d.set.split(':'); const it = find(k, id); if (it){ it[f] = numIn(el.value); touch(); } }
   if (d.rate){ S[d.rate] = numIn(el.value); touch(); }
+  if (d.bi){ S.bi[d.bi] = numIn(el.value); touch(); }
   if (d.mmSet){ const v = numIn(el.value); S.mm[d.mmSet] = d.mmSet === 'decComm' ? v / 100 : v; touch(); }
 });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const el = e.target;
-  if (el.matches('.addform input')){ const key = el.id.replace(/^a[npv]-/, ''); doAdd(key); }
-  else if (el.matches('input[data-set],input[data-rate],input[data-mm-set]')) el.blur();
+  if (el.matches('.addform input')){ doAdd(el.id.replace(/^a[npv]-/, '')); }
+  else if (el.matches('input[data-set],input[data-rate],input[data-mm-set],input[data-bi]')) el.blur();
   else if (el.id === 'scenName') saveScenario();
 });
-document.getElementById('btnSave').addEventListener('click', saveScenario);
-document.getElementById('btnReset').addEventListener('click', () => { S = clone(BASE); dirty = false; render(); toast('База 03.10'); });
-document.getElementById('btnDrawer').addEventListener('click', e => { const dr = document.getElementById('drawer'); dr.hidden = !dr.hidden; e.currentTarget.setAttribute('aria-expanded', String(!dr.hidden)); });
-document.getElementById('btnCopyCode').addEventListener('click', () => copyText(encodeState(S), 'Код скопирован'));
-document.getElementById('btnCopyLink').addEventListener('click', () => copyText(location.href.split('#')[0] + '#s=' + encodeState(S), 'Ссылка скопирована'));
-document.getElementById('btnImport').addEventListener('click', () => {
-  const st = decodeState(document.getElementById('importCode').value);
-  const msg = document.getElementById('importMsg');
+$('btnSave').addEventListener('click', saveScenario);
+$('btnReset').addEventListener('click', () => { S = clone(BASE); dirty = false; render(); toast('База 03.10'); });
+$('btnDrawer').addEventListener('click', e => { const dr = $('drawer'); dr.hidden = !dr.hidden; e.currentTarget.setAttribute('aria-expanded', String(!dr.hidden)); });
+$('btnCopyCode').addEventListener('click', () => copyText(encodeState(S), 'Код скопирован'));
+$('btnCopyLink').addEventListener('click', () => copyText(location.href.split('#')[0] + '#s=' + encodeState(S), 'Ссылка скопирована'));
+$('btnImport').addEventListener('click', () => {
+  const st = decodeState($('importCode').value), msg = $('importMsg');
   if (!st){ msg.textContent = 'Код не читается — проверь, что он скопирован целиком.'; return; }
   S = st; dirty = true; msg.textContent = 'Открыт: ' + (S.name || 'сценарий') + '. Сохрани, чтобы он остался на этом устройстве.'; render();
 });
 
 /* ═══════════ подсказки ═══════════ */
-const tipEl = document.getElementById('tip');
+const tipEl = $('tip');
 let tipPinned = null;
 function showTip(el, x, y){
   const t = el.getAttribute('data-tip-t'), b = el.getAttribute('data-tip');
